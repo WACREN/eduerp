@@ -347,10 +347,10 @@ function uc_eduerp_fees_pay_fees(&$form_state) {
   }
 
   // A student need to be cleared to progress
-  if(!student_clearance_performed($student_id)) {
-    drupal_set_message(t('Sorry, you need to be cleared to progress'), 'error');
-    return FALSE;
-  }
+  //if(!student_clearance_performed($student_id)) {
+  //  drupal_set_message(t('Sorry, you need to be cleared to progress'), 'error');
+  //  return FALSE;
+  //}
 
   // test if student is still a student (graduated or expelled)
   $session = variable_get('eduerp_current_session', '') ? variable_get('eduerp_current_session', '') : NULL;

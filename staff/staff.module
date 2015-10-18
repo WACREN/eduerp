@@ -1540,8 +1540,8 @@ function semester_admin() {
   echo '<a href="' . url('admin/build/fees') . '">School Fees Report</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo drupal_get_form('open_close_student_registration_form');
-  echo '<br /><hr /><br />';
+  //echo drupal_get_form('open_close_student_registration_form');
+  //echo '<br /><hr /><br />';
 
   echo drupal_get_form('open_close_student_course_registration_form');
   echo '<br /><hr /><br />';

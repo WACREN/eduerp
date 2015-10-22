@@ -1,0 +1,9 @@
+<?php
+function importcourses_install() {
+  drupal_set_message('importcourses module installed');
+}
+
+function importcourses_uninstall() {
+  drupal_set_message('importcourses module uninstalled');
+}
+?>

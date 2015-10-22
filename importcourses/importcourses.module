@@ -1,0 +1,961 @@
+<?php
+
+function importcourses_menu() {
+
+  $items['importcourses/importcourses'] = array(
+    'title' => 'Import courses',
+    'page callback' => 'importcourses',
+    'access arguments' => array('administer users'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+
+function importcourses() {
+  ob_start();
+
+  echo '<b>Import Courses Form...</b><br />';
+  echo drupal_get_form('importcourses_form');
+
+  return ob_get_clean();
+}
+
+/**
+ * Form to Upload Course Data
+ *
+ * @uses importcourses_form_validate()
+ * @uses importcourses_form_submit()
+ * @return array Drupal Form
+ */
+function importcourses_form($form_state) {
+  if (empty($form_state['storage']['results'])) {
+
+    $form['#title'] = t('Upload Faculties, Departments, Courses and Programmes');
+
+    $form['#attributes'] = array('enctype' => 'multipart/form-data');
+
+    $form['courses_upload'] = array(
+      '#type' => 'file',
+      '#title' => t('File Name'),
+      '#size' => 48,
+      '#description' => t('Choose a File with data about Faculties, Departments, Courses and Programmes to create.')
+      );
+
+    $form['update_existing_programmes'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Allow Programme Courses and Programme Credit Loads to be updated for previously created Programmes',
+      '#default_value' => FALSE
+    );
+
+    $form['dont_save'] = array(
+      '#type' => 'checkbox',
+      '#title' => "Check this if you Don't want to import, but just want to check for errors<br />(but Level/Semester for Programme Credit Loads and Programme Courses will not be checked)",
+      '#default_value' => FALSE
+    );
+
+    $form['spacer'] = array('#value' => '<br /><br />');
+
+    $form['submit'] = array(
+      '#value' => t('Upload the File with data about Faculties, Departments, Courses and Programmes to create'),
+      '#type' => 'submit'
+    );
+  }
+  else {
+    $form['result'] = array('#value' => $form_state['storage']['results']);
+  }
+
+  return $form;
+}
+
+
+/**
+ * validate hook for {@link importcourses_form()}
+ */
+function importcourses_form_validate($form, &$form_state) {
+}
+
+
+/**
+ * submit hook for {@link importcourses_form()}
+ */
+function importcourses_form_submit($form, &$form_state) {
+
+  ob_start();
+
+  $update_existing_programmes = !empty($form_state['values']['update_existing_programmes']);
+  $do_save = empty($form_state['values']['dont_save']);
+  if (!$do_save) echo t('<b>Did not import (just checking for errors)...</b><br />');
+  if ($update_existing_programmes) echo t('(Update existing Programmes was set)<br /><br />');
+
+  $start_time = microtime(TRUE);
+  $faculty_count = 0;
+  $department_count = 0;
+  $course_count = 0;
+  $programme_count = 0;
+  $programme_credit_loads_count = 0;
+  $programme_courses_count = 0;
+
+  if (isset($_FILES['files']) && $_FILES['files']['name']['courses_upload'] && is_uploaded_file($_FILES['files']['tmp_name']['courses_upload'])) {
+    switch ($_FILES['files']['error']['courses_upload']) {
+      // @see http://php.net/manual/en/features.file-upload.errors.php
+      case UPLOAD_ERR_OK:
+        break;
+
+      case UPLOAD_ERR_INI_SIZE:
+      case UPLOAD_ERR_FORM_SIZE:
+        drupal_set_message(t('The file %file could not be saved, because it exceeds %maxsize, the maximum allowed size for uploads.', array('%file' => 'courses_upload', '%maxsize' => format_size(file_upload_max_size()))), 'error');
+        $form_state['storage']['results'] = ob_get_clean();
+        return 0;
+
+      case UPLOAD_ERR_PARTIAL:
+      case UPLOAD_ERR_NO_FILE:
+        drupal_set_message(t('The file %file could not be saved, because the upload did not complete.', array('%file' => 'courses_upload')), 'error');
+        $form_state['storage']['results'] = ob_get_clean();
+        return 0;
+
+        // Unknown error
+      default:
+        drupal_set_message(t('The file %file could not be saved. An unknown error has occurred.', array('%file' => 'courses_upload')), 'error');
+        $form_state['storage']['results'] = ob_get_clean();
+        return 0;
+    }
+
+    $faculty_nid_list = array();
+    $faculty_abbr_nid_list = array();
+    $result = db_query("SELECT * FROM {content_type_college}");
+    while($row = db_fetch_object($result)) {
+      $faculty_nid_list[strtolower($row->field_college_name_value)] = $row->nid;
+      $faculty_abbr_nid_list[strtolower($row->field_college_abbreviation_value)] = $row->nid;
+    }
+
+    $department_nid_list = array();
+    $result = db_query("SELECT * FROM {content_type_department}");
+    while($row = db_fetch_object($result)) {
+      $department_nid_list[strtolower($row->field_department_name_value)] = $row->nid;
+    }
+
+    $course_nid_list = array();
+    $course_code_nid_list = array();
+    $result = db_query("SELECT * FROM {content_type_course}");
+    while($row = db_fetch_object($result)) {
+      $course_nid_list[strtolower($row->field_coursetitle_value)] = $row->nid;
+      $course_code_nid_list[strtolower($row->field_code_value)] = $row->nid;
+    }
+
+    $programme_nid_list = array();
+    $programme_nid_list_new_ones = array(); // Ones that are being added in this Import
+    $programme_abbr_nid_list = array();
+    $result = db_query("SELECT * FROM {content_type_program}");
+    while($row = db_fetch_object($result)) {
+      $programme_nid_list[strtolower($row->field_programme_name_value)] = $row->nid;
+      if ($update_existing_programmes) $programme_nid_list_new_ones[strtolower($row->field_programme_name_value)] = $row->nid; // Ones that are being added in this Import
+      $programme_abbr_nid_list[strtolower($row->field_programme_abbr_value)] = $row->nid;
+    }
+
+    $line_number = 0;
+
+    if ($fp = fopen($_FILES['files']['tmp_name']['courses_upload'], 'r')) {
+      while (!feof($fp)) {
+        $line = fgets($fp);
+        $line_number++;
+
+        if (empty($line) || substr($line, 0, 1) == ' ' || substr($line, 0, 1) == '/' || substr($line, 0, 1) == '#' || substr($line, 0, 1) == "\n" || substr($line, 0, 1) == "\r") continue;
+
+
+        if (substr($line, 0, 9) === '<FACULTY>') {
+        //<FACULTY>(**)
+          $line_array = explode(',', $line);
+
+          if ($department_count != 0 || $course_count != 0 || $programme_count != 0 || $programme_credit_loads_count != 0 || $programme_courses_count != 0) {
+            echo t('Line @line_number skipped, line types out of order<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+          if (count($line_array) != 3) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Faculty Name
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Faculty Name has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($faculty_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Faculty Name is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $faculty = $text;
+
+        // Faculty Abbreviation
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Faculty Abbreviation has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($faculty_abbr_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Faculty Abbreviation is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $faculty_abbr = $text;
+
+          $node = new stdClass();
+          $node->type                                   = 'college';
+          $node->uid                                    = 1;  // Admin
+          $node->status                                 = 1;  // Published
+          $node->promote                                = 0;
+          $node->sticky                                 = 0;
+          $node->comment                                = 0;
+          $node->title                                  = $faculty;
+          $node->field_college_name[0]['value']         = $faculty;
+          $node->field_college_abbreviation[0]['value'] = $faculty_abbr;
+          $node->field_college_email_subdomain[0]['value'] = '';
+          if ($do_save) {
+            node_save($node);
+          }
+          else {
+            $node->nid = 999;
+          }
+          $faculty_nid_list[strtolower($faculty)] = $node->nid;
+          $faculty_abbr_nid_list[strtolower($faculty_abbr)] = $node->nid;
+
+          // module_invoke_all('updFacultyInfo', $node->nid, variable_get('eduerp_current_session', ''), $form_state['values']['faculty_subdomain']);
+
+          $faculty_count++;
+        }
+        elseif (substr($line, 0, 12) === '<DEPARTMENT>') {
+        //<DEPARTMENT>(**)
+          $line_array = explode(',', $line);
+
+          if ($course_count != 0 || $programme_count != 0 || $programme_credit_loads_count != 0 || $programme_courses_count != 0) {
+            echo t('Line @line_number skipped, line types out of order<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+          if (count($line_array) != 4) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Faculty
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Faculty has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($faculty_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Faculty does not exist<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $faculty = $text;
+
+        // Department Name
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Department Name has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($department_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Department Name is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $department = $text;
+
+        // Department Code
+          $text = process_substitute_text($line_array[3]);
+          if ($text === 0) {
+            echo t('Line @line_number skipped, Department Code has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $department_code = $text;
+
+          $node = new stdClass();
+          $node->type                              = 'department';
+          $node->uid                               = 1;  // Admin
+          $node->status                            = 1;  // Published
+          $node->promote                           = 0;
+          $node->sticky                            = 0;
+          $node->comment                           = 0;
+          $node->title                             = $department;
+          $node->field_department_name[0]['value'] = $department;
+          $node->field_college_id[0]['nid']        = $faculty_nid_list[strtolower($faculty)];
+          $node->field_department_code[0]['value'] = $department_code;
+          if ($do_save) {
+            node_save($node);
+          }
+          else {
+            $node->nid = 999;
+          }
+          $department_nid_list[strtolower($department)] = $node->nid;
+
+          $department_count++;
+        }
+        elseif (substr($line, 0, 8) === '<COURSE>') {
+        //<COURSE>(**)
+          $line_array = explode(',', $line);
+
+          if ($programme_count != 0 || $programme_credit_loads_count != 0 || $programme_courses_count != 0) {
+            echo t('Line @line_number skipped, line types out of order<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+          if (count($line_array) != 17) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Department
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Department has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($department_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Department does not exist<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $department = $text;
+
+        // Level
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text) || !in_array($text, array('100', '200', '300', '400', '500', '600', '700', '800', '900', '1', '2', '3' ,'4', '5', '6', '7', '8', '9'))) {
+            echo t('Line @line_number skipped, Course Level has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $level = $text;
+
+        // Semester
+          $text = process_substitute_text($line_array[3]);
+          if (empty($text) || !in_array($text, array('1', '2'))) {
+            echo t('Line @line_number skipped, Semester has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $semester = $text;
+
+        // Course Code
+          $text = process_substitute_text($line_array[4]);
+          if (empty($text) || strpos($text, ' ') !== FALSE) {
+            echo t('Line @line_number skipped, Course Code has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($course_code_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Course Code is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $course_code = $text;
+
+        // Course Title
+          $text = process_substitute_text($line_array[5]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Course Title has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($course_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Course Title is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $course = $text;
+
+        // Course Description
+          $text = process_substitute_text($line_array[6]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Course Description has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $course_description = str_replace('#CRLF#', "\r\n", $text);
+
+        // Credit Load
+          $text = process_substitute_text($line_array[7]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Credit Load has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $credit_load = $text;
+
+        // Total number of Continuous Assessments for the Course
+          $text = process_substitute_text($line_array[8]);
+          if ($text === 0 || !in_array($text, array('0', '1', '2', '3', '4'))) {
+            echo t('Line @line_number skipped, Total number of Continuous Assessments for the Course has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $number_ca = $text;
+
+        // Continuous Assessments Approval Method
+          $text = process_substitute_text($line_array[9]);
+          if ($text === 0 || !in_array($text, array('0', '1'))) {
+            echo t('Line @line_number skipped, Continuous Assessments Approval Method has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $approved_individually = $text;
+
+        // Maximum allowable marks for 1st Continuous Assessment
+          $text = process_substitute_text($line_array[10]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Maximum allowable marks for 1st Continuous Assessment has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_marks_ca1 = $text;
+
+        // Maximum allowable marks for 2nd Continuous Assessment
+          $text = process_substitute_text($line_array[11]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Maximum allowable marks for 2nd Continuous Assessment has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_marks_ca2 = $text;
+
+        // Maximum allowable marks for 3rd Continuous Assessment
+          $text = process_substitute_text($line_array[12]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Maximum allowable marks for 3rd Continuous Assessment has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_marks_ca3 = $text;
+
+        // Maximum allowable marks for 4th Continuous Assessment
+          $text = process_substitute_text($line_array[13]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Maximum allowable marks for 4th Continuous Assessment has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_marks_ca4 = $text;
+
+        // Maximum allowable marks for Exam
+          $text = process_substitute_text($line_array[14]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Maximum allowable marks for Exam has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_marks_exam = $text;
+
+          if ($number_ca == 0 && ($max_marks_exam) != 100) {
+            echo t('Line @line_number skipped, Total of used Continuous Assessment and Exam Marks must be 100<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if ($number_ca == 1 && ($max_marks_exam + $max_marks_ca1) != 100) {
+            echo t('Line @line_number skipped, Total of used Continuous Assessment and Exam Marks must be 100<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if ($number_ca == 2 && ($max_marks_exam + $max_marks_ca1 + $max_marks_ca2) != 100) {
+            echo t('Line @line_number skipped, Total of used Continuous Assessment and Exam Marks must be 100<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if ($number_ca == 3 && ($max_marks_exam + $max_marks_ca1 + $max_marks_ca2 + $max_marks_ca3) != 100) {
+            echo t('Line @line_number skipped, Total of used Continuous Assessment and Exam Marks must be 100<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if ($number_ca == 4 && ($max_marks_exam + $max_marks_ca1 + $max_marks_ca2 + $max_marks_ca3 + $max_marks_ca4) != 100) {
+            echo t('Line @line_number skipped, Total of used Continuous Assessment and Exam Marks must be 100<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Prerequisite Codes
+          $text = process_substitute_text($line_array[15]);
+          if ($text === 0 || strpos($text, ' ') !== FALSE) {
+            echo t('Line @line_number skipped, Prerequisite Codes has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $bad_code = FALSE;
+          $self_reference_code = FALSE;
+          //if prerequisites is not empty then make sure it conforms
+          if (strlen($text) > 0) {
+            $bits = explode(",", $text);
+            if (is_array($bits) && sizeof($bits)) {
+              //looks like he entered more than one course codes
+              foreach ($bits as $v) {
+                $v = trim($v);
+                if(! empty($v)){
+                  if (strpos($v, '/')) {
+                    //a / was found..ok
+                    //lets break it up
+                    $morebits =  explode("/", $v);
+                    if (is_array($morebits) && sizeof($morebits)) {
+                      //fine now test each
+                      foreach ($morebits as $h) {
+                        $h = trim($h);
+                        if(! empty($h)){
+                          //the data is single so check for valid course code
+                          if (empty($course_code_nid_list[strtolower($h)])) {
+                            $bad_code = TRUE;
+                          }
+                          elseif (strtolower($h) == strtolower($course_code)) {
+                            $self_reference_code = TRUE;//cannot reference self
+                          }
+                        }
+                      }
+                    }
+                    else {
+                      //something spooky is going on
+                      $bad_code = TRUE;
+                    }
+                  }
+                  else {
+                    //the data is single so check for valid course code
+                    if (empty($course_code_nid_list[strtolower($v)])) {
+                      $bad_code = TRUE;
+                    }
+                    elseif (strtolower($v) == strtolower($course_code)) {
+                      $self_reference_code = TRUE;//cannot reference self
+                    }
+                  }
+                }
+              }
+            }
+            else {//seems he entered only one course code. well lets see
+              //check for valid course code
+              if (empty($course_code_nid_list[strtolower($text)])) {
+                $bad_code = TRUE;
+              }
+              elseif (trim(strtolower($form_state['values']['prerequisites_codes'])) == strtolower($course_code)) {
+                $self_reference_code = TRUE;//cannot reference self
+              }
+            }
+          }
+          if ($bad_code) {
+            echo t('Line @line_number skipped, Course Code in Prerequisite Codes does not exist in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if ($self_reference_code) {
+            echo t('Line @line_number skipped, Course Code in Prerequisite Codes is a self reference to the current Course Code<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $prerequisite_codes = $text;
+
+        // Prerequisite Description
+          $text = process_substitute_text($line_array[16]);
+          if ($text === 0 || (!empty($prerequisite_codes) && empty($text))) {
+            echo t('Line @line_number skipped, Prerequisite Description has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $prerequisite_description = str_replace('#CRLF#', "\r\n", $text);
+
+          $node = new stdClass();
+          $node->type                                 = 'course';
+          $node->uid                                  = 1;  // Admin
+          $node->status                               = 1;  // Published
+          $node->promote                              = 0;
+          $node->sticky                               = 0;
+          $node->comment                              = 0;
+          $node->title                                = $course;
+          $node->field_department_nid[0]['nid']       = $department_nid_list[strtolower($department)];
+          $node->field_code[0]['value']               = $course_code;
+          $node->field_coursetitle[0]['value']        = $course;
+          $node->field_course_description[0]['value'] = $course_description;
+          $node->field_creditload[0]['value']         = $credit_load;
+          $node->field_prerequisite_codes[0]['value'] = (!empty($prerequisite_codes)) ? $prerequisite_codes : ' ';
+          $node->field_prerequisite[0]['value']       = (!empty($prerequisite_description)) ? $prerequisite_description : ' ';
+          $node->field_level[0]['value']              = $level;
+          $node->field_semester[0]['value']           = $semester;
+          if ($do_save) {
+            node_save($node);
+          }
+          else {
+            $node->nid = 999;
+          }
+          $course_nid_list[strtolower($course)] = $node->nid;
+          $course_code_nid_list[strtolower($course_code)] = $node->nid;
+          if ($do_save) {
+            $sql = "INSERT INTO {course_grade_weightings}
+              (course_id, number_of_ca, ca_approved_onebyone, max_mark_ca1, max_mark_ca2, max_mark_ca3, max_mark_ca4, max_mark_exam)
+              VALUES (%d, %d, %d, %d, %d, %d, %d, %d)";
+            db_query($sql, $node->nid, $number_ca, $approved_individually, $max_marks_ca1, $max_marks_ca2, $max_marks_ca3, $max_marks_ca4, $max_marks_exam);
+          }
+
+          $course_count++;
+        }
+        elseif (substr($line, 0, 11) === '<PROGRAMME>') {
+        //<PROGRAMME>(**)
+          $line_array = explode(',', $line);
+
+          if ($programme_credit_loads_count != 0 || $programme_courses_count != 0) {
+            echo t('Line @line_number skipped, line types out of order<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+          if (count($line_array) != 9) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Department
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Department has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($department_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Department does not exist<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $department = $text;
+
+        // Programme Name
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Programme Name has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($programme_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Programme Name is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $programme = $text;
+
+        // Programme Abbreviation
+          $text = process_substitute_text($line_array[3]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Programme Abbreviation has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (!empty($programme_abbr_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Programme Abbreviation is a duplicate in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $programme_abbr = $text;
+
+        // Level a Student starts in the Programme
+          $text = process_substitute_text($line_array[4]);
+          if (empty($text) || !in_array($text, array('100', '1'))) {
+            echo t('Line @line_number skipped, Level a Student starts in the Programme has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $start_level = $text;
+
+        // Duration (Number of years the Programme takes)
+          $text = process_substitute_text($line_array[5]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,2}$/", $text) || $text === '00') {
+            echo t('Line @line_number skipped, Duration (Number of years the Programme takes) has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $duration = $text;
+
+        // Maximum number of Semesters a Student may take (not enforced)
+          $text = process_substitute_text($line_array[6]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,2}$/", $text) || $text === '00') {
+            echo t('Line @line_number skipped, Maximum number of Semesters a Student may take (not enforced) has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_semesters = $text;
+
+        // Minimum Credit Load for graduating from Programme
+          $text = process_substitute_text($line_array[7]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,2}$/", $text) || $text === '00') {
+            echo t('Line @line_number skipped, Minimum Credit Load for graduating from Programme has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $min_credit_load = $text;
+
+        // Programme Type
+          $program_types = array(
+            'Undergraduate',
+            'Medicine Type Grades',
+            'Matric',
+            'Certificate CIS',
+            'Diploma CIS',
+            'Postgraduate Diploma',
+            'Postgraduate Masters',
+            'Postgraduate PhD',
+            'Postgraduate MPhil',
+            'Closed to new entrants, Undergraduate',
+            'Closed to new entrants, Medicine Type Grades',
+            'Closed to new entrants, Matric',
+            'Closed to new entrants, Certificate CIS',
+            'Closed to new entrants, Diploma CIS',
+            'Closed to new entrants, Postgraduate Diploma',
+            'Closed to new entrants, Postgraduate Masters',
+            'Closed to new entrants, Postgraduate PhD',
+            'Closed to new entrants, Postgraduate MPhil');
+          $text = process_substitute_text($line_array[8]);
+          if (empty($text) || !in_array($text, $program_types)) {
+            echo t('Line @line_number skipped, Programme Type has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $map_to_number = array(
+            'Undergraduate' => 1,
+            'Medicine Type Grades' => 3,
+            'Matric' => 6,
+            'Certificate CIS' => 7,
+            'Diploma CIS' => 8,
+            'Postgraduate Diploma' => 9,
+            'Postgraduate Masters' => 10,
+            'Postgraduate PhD' => 11,
+            'Postgraduate MPhil' => 12,
+            'Closed to new entrants, Undergraduate' => -1,
+            'Closed to new entrants, Medicine Type Grades' => -3,
+            'Closed to new entrants, Matric' => -6,
+            'Closed to new entrants, Certificate CIS' => -7,
+            'Closed to new entrants, Diploma CIS' => -8,
+            'Closed to new entrants, Postgraduate Diploma' => -9,
+            'Closed to new entrants, Postgraduate Masters' => -10,
+            'Closed to new entrants, Postgraduate PhD' => -11,
+            'Closed to new entrants, Postgraduate MPhil' => -12,
+          );
+          $program_type = $map_to_number[$text];
+
+          $node = new stdClass();
+          $node->type                             = 'program';
+          $node->uid                              = 1;  // Admin
+          $node->status                           = 1;  // Published
+          $node->promote                          = 0;
+          $node->sticky                           = 0;
+          $node->comment                          = 0;
+          $node->title                            = $programme;
+          $node->field_programme_name[0]['value'] = $programme;
+          $node->field_programme_abbr[0]['value'] = $programme_abbr;
+          $node->field_department_id[0]['nid']    = $department_nid_list[strtolower($department)];
+          $node->field_duration[0]['value']       = $duration;
+          $node->field_max_duration[0]['value']   = $max_semesters;
+          $node->field_min_credit_load_program[0]['value'] = $min_credit_load;
+          $node->field_program_type[0]['value']   = $program_type;
+          if ($do_save) {
+            node_save($node);
+          }
+          else {
+            $node->nid = 999;
+          }
+          $programme_nid_list[strtolower($programme)] = $node->nid;
+          $programme_nid_list_new_ones[strtolower($programme)] = $node->nid; // Ones that are being added in this Import
+          $programme_abbr_nid_list[strtolower($programme_abbr)] = $node->nid;
+
+          if ($do_save) {
+            // Set values which will be overridden later
+            $sql = "INSERT INTO {program_level_semester} (programme_id, level, semester, min_credit_load, max_credit_load, open_for_registrations) VALUES ";
+            for ($l = 1; $l <= $duration; $l++) {
+              for ($s = 1; $s <= 2; $s++) {
+                $level = $start_level * $l;
+                $sql .= "('". $node->nid ."', '". $level ."', '". $s ."', '". 1 ."', '". 1 ."', '". 0 ."' ), ";
+              }
+            }
+            $sql = substr($sql, 0, -2);
+            db_query($sql);
+          }
+
+          $programme_count++;
+        }
+        elseif (substr($line, 0, 24) === '<PROGRAMME CREDIT LOADS>') {
+        //<PROGRAMME CREDIT LOADS>(**)
+          $line_array = explode(',', $line);
+
+          if ($programme_courses_count != 0) {
+            echo t('Line @line_number skipped, line types out of order<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+          if (count($line_array) != 6) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Programme
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Programme has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($programme_nid_list_new_ones[strtolower($text)])) {
+            echo t('Line @line_number skipped, Programme is not being imported, so cannot set Credit Loads<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $programme = $text;
+
+        // Level
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text) || !in_array($text, array('100', '200', '300', '400', '500', '600', '700', '800', '900', '1', '2', '3' ,'4', '5', '6', '7', '8', '9'))) {
+            echo t('Line @line_number skipped, Level has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $level = $text;
+
+        // Semester
+          $text = process_substitute_text($line_array[3]);
+          if (empty($text) || !in_array($text, array('1', '2'))) {
+            echo t('Line @line_number skipped, Semester has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $semester = $text;
+
+        // Minimum Credit Load for Student Registering Courses for the Semester at that Level
+          $text = process_substitute_text($line_array[4]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Minimum Credit Load for Student Registering Courses for the Semester at that Level has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $min_credit_load_for_level_semester = $text;
+
+        // Maximum Credit Load for Student Registering Courses for the Semester at that Level
+          $text = process_substitute_text($line_array[5]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000' || $text < $min_credit_load_for_level_semester) {
+            echo t('Line @line_number skipped, Maximum Credit Load for Student Registering Courses for the Semester at that Level has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $max_credit_load_for_level_semester = $text;
+
+          if ($do_save) {
+            $result = db_query("
+              SELECT programme_id FROM {program_level_semester}
+              WHERE
+                programme_id=%d AND
+                level=%d AND
+                semester=%d",
+              $programme_nid_list_new_ones[strtolower($programme)], $level, $semester);
+            if (db_fetch_object($result)) {
+              db_query("
+                UPDATE {program_level_semester} SET min_credit_load=%d, max_credit_load=%d
+                WHERE
+                  programme_id=%d AND
+                  level=%d AND
+                  semester=%d",
+                $min_credit_load_for_level_semester, $max_credit_load_for_level_semester, $programme_nid_list_new_ones[strtolower($programme)], $level, $semester);
+            }
+            else {
+              echo t('Line @line_number skipped, Level/Semester combination not valid for this Programme<br />', array('@line_number' => $line_number));
+              continue;
+            }
+          }
+
+          $programme_credit_loads_count++;
+        }
+        elseif (substr($line, 0, 19) === '<PROGRAMME COURSES>') {
+        //<PROGRAMME COURSES>(**)
+          $line_array = explode(',', $line);
+
+          if (count($line_array) != 7) {
+            echo t('Line @line_number skipped, wrong number of entries<br />', array('@line_number' => $line_number));
+            continue;
+          }
+
+        // Programme
+          $text = process_substitute_text($line_array[1]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Programme has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($programme_nid_list_new_ones[strtolower($text)])) {
+            echo t('Line @line_number skipped, Programme is not being imported, so cannot set Programme Courses<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $programme = $text;
+
+        // Course Code
+          $text = process_substitute_text($line_array[2]);
+          if (empty($text)) {
+            echo t('Line @line_number skipped, Course Code has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          if (empty($course_code_nid_list[strtolower($text)])) {
+            echo t('Line @line_number skipped, Course Code does not exist in uploaded file or database<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $course_code = $text;
+
+        // Level
+          $text = process_substitute_text($line_array[3]);
+          if (empty($text) || !in_array($text, array('100', '200', '300', '400', '500', '600', '700', '800', '900', '1', '2', '3' ,'4', '5', '6', '7', '8', '9'))) {
+            echo t('Line @line_number skipped, Level has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $level = $text;
+
+        // Semester
+          $text = process_substitute_text($line_array[4]);
+          if (empty($text) || !in_array($text, array('1', '2'))) {
+            echo t('Line @line_number skipped, Semester has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $semester = $text;
+
+        // Credit Load
+          $text = process_substitute_text($line_array[5]);
+          if ($text === 0 || !preg_match("/^[0-9]{1,3}$/", $text) || $text === '00' || $text === '000') {
+            echo t('Line @line_number skipped, Credit Load has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $credit_load = $text;
+
+        // Course Type
+          $text = process_substitute_text($line_array[6]);
+          if (empty($text) || !in_array($text, array('1', '2'))) {
+            echo t('Line @line_number skipped, Course Type has bad format<br />', array('@line_number' => $line_number));
+            continue;
+          }
+          $course_type = $text;
+
+          if ($do_save) {
+            $result = db_query("
+              SELECT programme_id FROM {program_level_semester}
+              WHERE
+                programme_id=%d AND
+                level=%d AND
+                semester=%d",
+              $programme_nid_list_new_ones[strtolower($programme)], $level, $semester);
+            if (!db_fetch_object($result)) {
+              echo t('Line @line_number skipped, Level/Semester combination not valid for this Programme<br />', array('@line_number' => $line_number));
+              continue;
+            }
+
+            $sql = "SELECT program_course_id FROM {program_course} WHERE course_id=%d AND programme_id=%d AND level='%s' AND semester='%s'";
+            $result = db_query($sql, $course_code_nid_list[strtolower($course_code)], $programme_nid_list_new_ones[strtolower($programme)], $level, $semester);
+            if (db_fetch_object($result)) {
+              echo t('Line @line_number skipped, Course would be a duplicate for a Programme/Level/Semester<br />', array('@line_number' => $line_number));
+              continue;
+            }
+            else {
+              $sql = "
+                INSERT INTO {program_course}
+                SET course_id=%d, programme_id=%d, level='%s', semester='%s', course_type=%d, credit_load=%d, lecturer_id=0, historical=0";
+              db_query($sql, $course_code_nid_list[strtolower($course_code)], $programme_nid_list_new_ones[strtolower($programme)], $level, $semester, $course_type, $credit_load);
+            }
+          }
+
+          $programme_courses_count++;
+        }
+        else {
+          echo t('Line @line_number skipped, format not recognised<br />', array('@line_number' => $line_number));
+        }
+      }
+      fclose($fp);
+    }
+    else {
+      drupal_set_message(t('Failed to read uploaded file.'), 'error');
+    }
+  }
+  else {
+    form_set_error('courses_upload', t('Failed to upload the file'));
+  }
+
+  $del = number_format(microtime(TRUE) - $start_time, 3);
+  echo t('<b>Imported...</b><br />@faculty_count Faculties<br /> @department_count Departments<br />@course_count Courses<br />@programme_count Programmes<br />@programme_credit_loads_count Programme Credit Loads<br />@programme_courses_count Programme Courses<br /><br />in @del Seconds<br />',
+    array('@faculty_count' => $faculty_count, '@department_count' => $department_count, '@course_count' => $course_count, '@programme_count' => $programme_count, '@programme_credit_loads_count' => $programme_credit_loads_count, '@programme_courses_count' => $programme_courses_count, '@del' =>  $del));
+
+  echo '<br /><a href="' . url('importcourses/importcourses') . '">' . t('Return to the Import Form') . '</a>';
+
+  $form_state['storage']['results'] = ob_get_clean();
+}
+
+
+function process_substitute_text($text) {
+  if (str_replace('&', '&amp;', $text) != htmlspecialchars($text, ENT_COMPAT, 'UTF-8')) return 0;
+  return str_replace('#COMMA#', ',', trim($text, "\t\n\r\0\x0B")); // This trim() is overkill as we theoretically only need to remove \n from right of last field in a line
+}
+
+
+/* (**)Sample file ...(**)
+# Only includes minimum number of each type of line
+
+<FACULTY>,Natural Sciences#COMMA# of Côte D'Ivoire,Sci
+<DEPARTMENT>,Natural Sciences#COMMA# of Côte D'Ivoire,Physics & Maths Physics,Phy
+<COURSE>,Physics & Maths Physics,100,1,PHY101,Intro to Physics,Line 1 of Description#CRLF#Line 2 of Description,4,2,1,20,20,0,0,60,,
+<COURSE>,Physics & Maths Physics,200,1,PHY201,Particle Physics,Line 1 of Description#CRLF#Line 2 of Description,4,2,1,20,20,0,0,60,PHY101,Need first year Physics
+<PROGRAMME>,Physics & Maths Physics,BSc Physics,Phy,100,2,8,90,Undergraduate
+<PROGRAMME CREDIT LOADS>,BSc Physics,100,1,10,15
+<PROGRAMME CREDIT LOADS>,BSc Physics,100,2,11,16
+<PROGRAMME CREDIT LOADS>,BSc Physics,200,1,12,17
+<PROGRAMME CREDIT LOADS>,BSc Physics,200,2,13,18
+<PROGRAMME COURSES>,BSc Physics,PHY101,100,1,4,1
+<PROGRAMME COURSES>,BSc Physics,PHY201,200,2,5,2
+
+# */
+?>

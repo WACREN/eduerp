@@ -1,0 +1,5 @@
+name = importcourses
+description = EduERP Import Courses.
+package = EduERP
+dependencies[] = eduerp
+core = 6.x

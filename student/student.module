@@ -2197,7 +2197,7 @@ function student_user($op, &$edit, &$account, $category = NULL) {
           $node->field_profile_marital_status[0]['value']    = 'single';
 
 // Hack to match ISO3166 with EduERP (eduerp_countries)
-ISO3166toEduERPCountries = array(
+$ISO3166toEduERPCountries = array(
  'AF' => "Afghanistan"
 ,'AL' => "Albania"
 ,'DZ' => "Algeria"
@@ -2431,8 +2431,8 @@ ISO3166toEduERPCountries = array(
 ,'ZM' => "Zambia"
 ,'ZW' => "Zimbabwe");
 
-          if (!empty(ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]])) {
-            $node->field_profile_country_name[0]['value']      = ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]];
+          if (!empty($ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]])) {
+            $node->field_profile_country_name[0]['value']      = $ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]];
           }
           else {
             $node->field_profile_country_name[0]['value']      = 'Nigeria';

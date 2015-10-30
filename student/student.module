@@ -2082,18 +2082,528 @@ function student_hostel_reservation(){
 }
 
 
+///**
+// * Implementation of hook_user(), make newly inserted user with role 'anonymous user' an 'Applicant'
+// *
+// * @uses eduerp_has_role()
+// * @uses eduerp_add_role()
+// */
+//function student_user($op, &$edit, &$account, $category = NULL) {
+//  global $user;
+//  if ($op == 'insert' && eduerp_has_role($user, 'anonymous user')) {
+//    eduerp_add_role($account, 'Applicant');
+//    $edit['roles'] += $account->roles;
+//  }
+//}
+
+
 /**
- * Implementation of hook_user(), make newly inserted user with role 'anonymous user' an 'Applicant'
+ * Implementation of hook_user(), create profiles for a newly inserted user from SAML/LDAP and student_program CCK for a student
  *
- * @uses eduerp_has_role()
- * @uses eduerp_add_role()
+ * @uses student_write_file()
+ * @uses create_student_program()
+ * @uses record_cleared()
+ * @global SimpleSAML_Auth_Simple $_simplesamlphp_auth_as
+ * @global array $_simplesamlphp_auth_saml_attributes
  */
 function student_user($op, &$edit, &$account, $category = NULL) {
-  global $user;
-  if ($op == 'insert' && eduerp_has_role($user, 'anonymous user')) {
-    eduerp_add_role($account, 'Applicant');
-    $edit['roles'] += $account->roles;
+  global $_simplesamlphp_auth_as;
+  global $_simplesamlphp_auth_saml_attributes;
+
+  if ($op == 'insert' && $category = 'account') {
+    if ($_simplesamlphp_auth_as->isAuthenticated()) {
+      if (isset($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['sn']) && isset($_simplesamlphp_auth_saml_attributes['sn'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['givenName']) && isset($_simplesamlphp_auth_saml_attributes['givenName'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['c']) && isset($_simplesamlphp_auth_saml_attributes['c'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['mail']) && isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
+
+        foreach ($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation'] as $aff) {
+          if ($aff == 'student') {
+            $affiliation = 'student';
+            break;
+          }
+          elseif ($aff == 'faculty') {
+            $affiliation = 'staff';
+            break;
+          }
+          elseif ($aff == 'staff') {
+            $affiliation = 'staff';
+            break;
+          }
+          else {
+            $affiliation = FALSE;
+          }
+        }
+
+        if ($affiliation === 'student') {
+          $programme_nid = 0;
+          if (isset($_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire']) && !empty($_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0])) {
+            $sql = "SELECT nid FROM {content_type_program} WHERE field_programme_name_value='%s'";
+            $result = db_query($sql, $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0]);
+            $row = db_fetch_object($result);
+            if (!empty($row->nid)) {
+              $programme_nid = $row->nid;
+            }
+            else {
+              error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' has an invalid Programme: ' . $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0]);
+            }
+          }
+          if (!$programme_nid) {
+            $affiliation = FALSE;
+            error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' has no Programme');
+          }
+        }
+
+        if ($affiliation === 'student' || $affiliation === 'staff') {
+          $node = new stdClass();
+          $node->type                                        = 'profile';
+          $node->uid                                         = $account->uid;
+          $node->status                                      = 1;  // Published
+          $node->promote                                     = 0;
+          $node->sticky                                      = 0;
+          $node->comment                                     = 0;
+          $node->title                                       = 'Profile';
+          $node->field_profile_last_name[0]['value']         = $_simplesamlphp_auth_saml_attributes['sn'][0];
+          $node->field_profile_first_name[0]['value']        = $_simplesamlphp_auth_saml_attributes['givenName'][0];
+          if (isset($_simplesamlphp_auth_saml_attributes['middleName']) && !empty($_simplesamlphp_auth_saml_attributes['middleName'][0])) {
+            $node->field_profile_middle_name[0]['value']     = $_simplesamlphp_auth_saml_attributes['middleName'][0];
+          }
+          if (isset($_simplesamlphp_auth_saml_attributes['schacGender']) && isset($_simplesamlphp_auth_saml_attributes['schacGender'][0]) && $_simplesamlphp_auth_saml_attributes['schacGender'][0] == 2) {
+            $node->field_profile_gender[0]['value']          = 'female';
+          }
+          else {
+            $node->field_profile_gender[0]['value']          = 'male';
+          }
+          if (isset($_simplesamlphp_auth_saml_attributes['schacDateOfBirth']) && !empty($_simplesamlphp_auth_saml_attributes['schacDateOfBirth'][0])) {
+            $dob = $_simplesamlphp_auth_saml_attributes['schacDateOfBirth'][0];
+          }
+          else {
+            $dob = '20000101';
+          }
+          $year  = (int)substr($dob, 0, 4);
+          $month = (int)substr($dob, 4, 2);
+          $day   = (int)substr($dob, 6, 2);
+          if ($year <= 0 || $month <= 0 || $day <= 0) {
+            $year  = 2000;
+            $month = 1;
+            $day   = 1;
+          }
+          $node->field_profile_dob[0]['value']               = sprintf('%04d-%02d-%02dT00:00:00', $year, $month, $day);
+          if (isset($_simplesamlphp_auth_saml_attributes['mobile']) && !empty($_simplesamlphp_auth_saml_attributes['mobile'][0])) {
+            $node->field_profile_mobile_number[0]['value']   = $_simplesamlphp_auth_saml_attributes['mobile'][0];
+          }
+          $node->field_profile_marital_status[0]['value']    = 'single';
+
+// Hack to match ISO3166 with EduERP (eduerp_countries)
+ISO3166toEduERPCountries = array(
+ 'AF' => "Afghanistan"
+,'AL' => "Albania"
+,'DZ' => "Algeria"
+,'AS' => "American Samoa"
+,'AD' => "Andorra"
+,'AO' => "Angola"
+,'AI' => "Anguilla"
+,'AQ' => "Antarctica"
+,'AG' => "Antigua And Barbuda"
+,'AR' => "Argentina"
+,'AM' => "Armenia"
+,'AW' => "Aruba"
+,'AU' => "Australia"
+,'AT' => "Austria"
+,'AZ' => "Azerbaijan"
+,'BS' => "Bahamas The"
+,'BH' => "Bahrain"
+,'BD' => "Bangladesh"
+,'BB' => "Barbados"
+,'BY' => "Belarus"
+,'BE' => "Belgium"
+,'BZ' => "Belize"
+,'BJ' => "Benin"
+,'BM' => "Bermuda"
+,'BT' => "Bhutan"
+,'BO' => "Bolivia"
+,'BA' => "Bosnia and Herzegovina"
+,'BW' => "Botswana"
+,'BV' => "Bouvet Island"
+,'BR' => "Brazil"
+,'IO' => "British Indian Ocean Territory"
+,'BN' => "Brunei"
+,'BG' => "Bulgaria"
+,'BF' => "Burkina Faso"
+,'BI' => "Burundi"
+,'KH' => "Cambodia"
+,'CM' => "Cameroon"
+,'CA' => "Canada"
+,'CV' => "Cape Verde"
+,'KY' => "Cayman Islands"
+,'CF' => "Central African Republic"
+,'TD' => "Chad"
+,'CL' => "Chile"
+,'CN' => "China"
+,'CX' => "Christmas Island"
+,'CC' => "Cocos (Keeling) Islands"
+,'CO' => "Colombia"
+,'KM' => "Comoros"
+,'CG' => "Congo"
+,'CD' => "Congo  Democractic Republic of the"
+,'CK' => "Cook Islands"
+,'CR' => "Costa Rica"
+,'CI' => "Cote D'Ivoire (Ivory Coast)"
+,'HR' => "Croatia (Hrvatska)"
+,'CU' => "Cuba"
+,'CY' => "Cyprus"
+,'CZ' => "Czech Republic"
+,'DK' => "Denmark"
+,'DJ' => "Djibouti"
+,'DM' => "Dominica"
+,'DO' => "Dominican Republic"
+,'EC' => "Ecuador"
+,'EG' => "Egypt"
+,'SV' => "El Salvador"
+,'GQ' => "Equatorial Guinea"
+,'ER' => "Eritrea"
+,'EE' => "Estonia"
+,'ET' => "Ethiopia"
+,'FK' => "Falkland Islands (Islas Malvinas)"
+,'FO' => "Faroe Islands"
+,'FJ' => "Fiji Islands"
+,'FI' => "Finland"
+,'FR' => "France"
+,'GF' => "French Guiana"
+,'PF' => "French Polynesia"
+,'TF' => "French Southern Territories"
+,'GA' => "Gabon"
+,'GM' => "Gambia The"
+,'GE' => "Georgia"
+,'DE' => "Germany"
+,'GH' => "Ghana"
+,'GI' => "Gibraltar"
+,'GR' => "Greece"
+,'GL' => "Greenland"
+,'GD' => "Grenada"
+,'GP' => "Guadeloupe"
+,'GU' => "Guam"
+,'GT' => "Guatemala"
+,'GN' => "Guinea"
+,'GW' => "Guinea-Bissau"
+,'GY' => "Guyana"
+,'HT' => "Haiti"
+,'HM' => "Heard and McDonald Islands"
+,'HN' => "Honduras"
+,'HU' => "Hungary"
+,'IS' => "Iceland"
+,'IN' => "India"
+,'ID' => "Indonesia"
+,'IR' => "Iran"
+,'IQ' => "Iraq"
+,'IE' => "Ireland"
+,'IL' => "Israel"
+,'IT' => "Italy"
+,'JM' => "Jamaica"
+,'JP' => "Japan"
+,'JO' => "Jordan"
+,'KZ' => "Kazakhstan"
+,'KE' => "Kenya"
+,'KI' => "Kiribati"
+,'KP' => "Korea"
+,'KR' => "Korea North"
+,'KW' => "Kuwait"
+,'KG' => "Kyrgyzstan"
+,'LA' => "Laos"
+,'LV' => "Latvia"
+,'LB' => "Lebanon"
+,'LS' => "Lesotho"
+,'LR' => "Liberia"
+,'LY' => "Libya"
+,'LI' => "Liechtenstein"
+,'LT' => "Lithuania"
+,'LU' => "Luxembourg"
+,'MK' => "Macedonia"
+,'MG' => "Madagascar"
+,'MW' => "Malawi"
+,'MY' => "Malaysia"
+,'MV' => "Maldives"
+,'ML' => "Mali"
+,'MT' => "Malta"
+,'MH' => "Marshall Islands"
+,'MQ' => "Martinique"
+,'MR' => "Mauritania"
+,'MU' => "Mauritius"
+,'YT' => "Mayotte"
+,'MX' => "Mexico"
+,'FM' => "Micronesia"
+,'MD' => "Moldova"
+,'MC' => "Monaco"
+,'MN' => "Mongolia"
+,'MS' => "Montserrat"
+,'MA' => "Morocco"
+,'MZ' => "Mozambique"
+,'MM' => "Myanmar"
+,'NA' => "Namibia"
+,'NR' => "Nauru"
+,'NP' => "Nepal"
+,'NL' => "Netherlands The"
+,'NC' => "New Caledonia"
+,'NZ' => "New Zealand"
+,'NI' => "Nicaragua"
+,'NE' => "Niger"
+,'NG' => "Nigeria"
+,'NU' => "Niue"
+,'NF' => "Norfolk Island"
+,'MP' => "Northern Mariana Islands"
+,'NO' => "Norway"
+,'OM' => "Oman"
+,'PK' => "Pakistan"
+,'PW' => "Palau"
+,'PA' => "Panama"
+,'PG' => "Papua new Guinea"
+,'PY' => "Paraguay"
+,'PE' => "Peru"
+,'PH' => "Philippines"
+,'PN' => "Pitcairn Island"
+,'PL' => "Poland"
+,'PT' => "Portugal"
+,'PR' => "Puerto Rico"
+,'QA' => "Qatar"
+,'RE' => "Reunion"
+,'RO' => "Romania"
+,'RU' => "Russia"
+,'RW' => "Rwanda"
+,'SH' => "Saint Helena"
+,'KN' => "Saint Kitts And Nevis"
+,'LC' => "Saint Lucia"
+,'PM' => "Saint Pierre and Miquelon"
+,'VC' => "Saint Vincent And The Grenadines"
+,'WS' => "Samoa"
+,'SM' => "San Marino"
+,'ST' => "Sao Tome and Principe"
+,'SA' => "Saudi Arabia"
+,'SN' => "Senegal"
+,'SC' => "Seychelles"
+,'SL' => "Sierra Leone"
+,'SG' => "Singapore"
+,'SK' => "Slovakia"
+,'SI' => "Slovenia"
+,'SB' => "Solomon Islands"
+,'SO' => "Somalia"
+,'ZA' => "South Africa"
+,'GS' => "South Georgia"
+,'ES' => "Spain"
+,'LK' => "Sri Lanka"
+,'SD' => "Sudan"
+,'SR' => "Suriname"
+,'SJ' => "Svalbard And Jan Mayen Islands"
+,'SZ' => "Swaziland"
+,'SE' => "Sweden"
+,'CH' => "Switzerland"
+,'SY' => "Syria"
+,'TW' => "Taiwan"
+,'TJ' => "Tajikistan"
+,'TZ' => "Tanzania"
+,'TH' => "Thailand"
+,'TG' => "Togo"
+,'TK' => "Tokelau"
+,'TO' => "Tonga"
+,'TT' => "Trinidad And Tobago"
+,'TN' => "Tunisia"
+,'TR' => "Turkey"
+,'TM' => "Turkmenistan"
+,'TC' => "Turks And Caicos Islands"
+,'TV' => "Tuvalu"
+,'UG' => "Uganda"
+,'UA' => "Ukraine"
+,'AE' => "United Arab Emirates"
+,'GB' => "United Kingdom"
+,'US' => "United States"
+,'UM' => "United States Minor Outlying Islands"
+,'UY' => "Uruguay"
+,'UZ' => "Uzbekistan"
+,'VU' => "Vanuatu"
+,'VE' => "Venezuela"
+,'VN' => "Vietnam"
+,'VG' => "Virgin Islands (British)"
+,'VI' => "Virgin Islands (US)"
+,'WF' => "Wallis And Futuna Islands"
+,'EH' => "Western Sahara"
+,'YE' => "Yemen"
+,'ZM' => "Zambia"
+,'ZW' => "Zimbabwe");
+
+          if (!empty(ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]])) {
+            $node->field_profile_country_name[0]['value']      = ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]];
+          }
+          else {
+            $node->field_profile_country_name[0]['value']      = 'Nigeria';
+          }
+          $node->field_profile_state_name_origin[0]['value']   = 'Foreign';
+          $node->field_profile_lga_name[0]['value']            = 'Foreign';
+          $node->field_profile_religion[0]['value']            = 'Others';
+          if (isset($_simplesamlphp_auth_saml_attributes['homePostalAddress']) && !empty($_simplesamlphp_auth_saml_attributes['homePostalAddress'][0])) {
+            $node->field_profile_permanent_address[0]['value'] = $_simplesamlphp_auth_saml_attributes['homePostalAddress'][0];
+          }
+          else {
+            $node->field_profile_permanent_address[0]['value'] = '-';
+          }
+          if (isset($_simplesamlphp_auth_saml_attributes['I']) && !empty($_simplesamlphp_auth_saml_attributes['I'][0])) {
+            $node->field_profile_permanent_city[0]['value']    = $_simplesamlphp_auth_saml_attributes['I'][0];
+          }
+          else {
+            $node->field_profile_permanent_city[0]['value']    = '-';
+          }
+          $node->field_profile_permanent_state[0]['value']     = 'Foreign';
+
+          if (isset($_simplesamlphp_auth_saml_attributes['jpegPhoto']) && !empty($_simplesamlphp_auth_saml_attributes['jpegPhoto'][0])) {
+            $file = new stdClass();
+            $file->uid       = $account->uid;
+            $file->filename  = 'Photo_' . $account->uid . '.jpg';
+            $file->filepath  = 'sites/default/files/profile/photo/' . $file->filename;
+            $file->filemime  = 'image/jpeg';
+            $file->filesize  = strlen($_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+            $file->status    = 1;
+            $file->timestamp = time();
+            drupal_write_record('files', $file);
+            error_log('Photo fid: ' . $file->fid);
+
+            student_write_file(file_directory_path() . '/' . $file->filepath, $_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+
+            $node->field_profile_photograph['fid']  = $file->fid;
+            $node->field_profile_photograph['list'] = 1;
+            $node->field_profile_photograph['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' photo');
+          }
+
+          if (isset($_simplesamlphp_auth_saml_attributes['jpegSignature']) && !empty($_simplesamlphp_auth_saml_attributes['jpegSignature'][0])) {
+            $file = new stdClass();
+            $file->uid       = $account->uid;
+            $file->filename  = 'Signature_' . $account->uid . '.jpg';
+            $file->filepath  = 'sites/default/files/profile/signature/' . $file->filename;
+            $file->filemime  = 'image/jpeg';
+            $file->filesize  = strlen($_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+            $file->status    = 1;
+            $file->timestamp = time();
+            drupal_write_record('files', $file);
+            error_log('Signature fid: ' . $file->fid);
+
+            student_write_file(file_directory_path() . '/' . $file->filepath, $_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+
+            $node->field_profile_signature['fid']  = $file->fid;
+            $node->field_profile_signature['list'] = 1;
+            $node->field_profile_signature['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' signature');
+          }
+
+          node_save($node);
+        }
+
+        if ($affiliation === 'student') {
+          $node = new stdClass();
+          $node->type                                       = 'student_profile';
+          $node->uid                                        = $account->uid;
+          $node->status                                     = 1;  // Published
+          $node->promote                                    = 0;
+          $node->sticky                                     = 0;
+          $node->comment                                    = 0;
+          $node->title                                      = 'Student Profile';
+          $node->field_profile_first_choice[0]['nid']       = $programme_nid;
+          $node->field_profile_health_status[0]['value']    = 'normal';
+          $node->field_profile_jambno[0]['value']           = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_kin_address[0]['value']      = '-';
+          $node->field_profile_kin_city[0]['value']         = '-';
+          $node->field_profile_kin_mobile[0]['value']       = '-';
+          $node->field_profile_kin_name[0]['value']         = '-';
+          $node->field_profile_kin_relationship[0]['value'] = 'Other';
+          if (isset($_simplesamlphp_auth_saml_attributes['eduPersonEntryLevel']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonEntryLevel'][0]) &&
+            $_simplesamlphp_auth_saml_attributes['eduPersonEntryLevel'][0] === 'basic') {
+
+            $node->field_profile_mode_of_entry[0]['value']  = 'UTME';
+          }
+          else {
+            $node->field_profile_mode_of_entry[0]['value']  = 'DE';
+          }
+          $node->field_profile_mode_of_entry[0]['value']  = 'UTME'; // No logic available to determine anything other than basic
+
+          $sql = "SELECT DISTINCT level FROM {program_level_semester} WHERE programme_id=%d ORDER BY level";
+          $result = db_query($sql, $node->field_profile_first_choice[0]['nid']);
+
+          $level1 = '100';
+
+          $row = db_fetch_object($result);
+          if (!empty($row->level)) {
+            $level1 = $row->level;
+            $row = db_fetch_object($result);
+            if (!empty($row->level)) $level2 = $row->level;
+          }
+
+          if (empty($level2)) $level2 = $level1; // If there is no 2nd Level
+
+          // Set the level to 100 (probably) if the student's mode of entry is not DE, if it is DE then it's 200 (probably)
+          $node->field_profile_level_name[0]['value'] = ($node->field_profile_mode_of_entry[0]['value'] != 'DE') ? $level1 : $level2;
+          if ($level1 < 100) $node->field_profile_level_name[0]['value'] = $level1; // Should be no DE for Part Time/Postgraduate
+
+          $node->field_profile_matno[0]['value']             = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_mode_of_study[0]['value']     = 'Full_Time';
+          $node->field_profile_olevel_insti1[0]['value']     = '-';
+          $node->field_profile_olevel_qual_1[0]['value']     = 'Diploma';
+          $node->field_profile_olevel_qual_2[0]['value']     = 'OND';
+          $node->field_profile_reg_session[0]['value']       = '';
+          $node->field_profile_reg_semester[0]['value']      = '';
+          $node->field_profile_reg_session[0]['value']       = '';
+          $node->field_profile_score_details[0]['value']     = '-';
+          $node->field_profile_exam_number_1[0]['value']     = '-';
+          $node->field_profile_state_sponsor[0]['value']     = 'Foreign';
+          $node->field_profile_year_exam_taken_1[0]['value'] = '2000-01-01T00:00:00';
+          $node->field_profile_yearofentry[0]['value']       = substr(variable_get('eduerp_current_session', ''), 0, 4);
+          $node->field_university_email[0]['value']          = $_simplesamlphp_auth_saml_attributes['mail'][0];
+          node_save($node);
+
+          // create programme information for the student
+          create_student_program($account->uid);
+          record_cleared($account->uid, 'Cleared');
+        }
+        elseif ($affiliation === 'staff') {
+          $node = new stdClass();
+          $node->type                                       = 'staff_profile';
+          $node->uid                                        = $account->uid;
+          $node->status                                     = 1;  // Published
+          $node->promote                                    = 0;
+          $node->sticky                                     = 0;
+          $node->comment                                    = 0;
+          $node->title                                      = 'Staff Profile';
+          $node->field_profile_staff_no[0]['value']         = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_employment_type[0]['value']  = 'Full-Time';
+          $node->field_profile_staff_type[0]['value']       = 'Teaching';
+          $node->field_profile_appointment_date[0]['value'] = '2000-01-01T00:00:00';
+          $node->field_profile_temporary_state[0]['value']  = 'Foreign';
+          node_save($node);
+        }
+      }
+      else {
+        error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' is neither student, staff or faculty');
+      }
+    }
+    else {
+      error_log('simplesamlphp_auth is missing key attributes');
+    }
   }
+}
+
+
+/**
+ * Write a file to disk from a string
+ *
+ * @param string $path full path of file to be written (will create any missing directories)
+ * @param string $contents
+  */
+function student_write_file($path, $contents) {
+  error_log("Path being written: $path");
+  $parts = explode('/', $path);
+  $file = array_pop($parts);
+  $dir = '';
+  foreach ($parts as $part) {
+    if (!is_dir($dir .= "/$part")) mkdir($dir);
+  }
+  file_put_contents("$dir/$file", $contents);
+  @chmod("$dir/$file", 0664);
 }
 
 

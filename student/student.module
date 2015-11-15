@@ -2112,14 +2112,23 @@ function student_user($op, &$edit, &$account, $category = NULL) {
 
   if ($op == 'insert' && $category = 'account') {
     if ($_simplesamlphp_auth_as->isAuthenticated()) {
-      if (isset($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation'][0]) &&
-          isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) &&
+error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
+      if (isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0]) &&
+          (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) ||
+           isset($_simplesamlphp_auth_saml_attributes['User Name']) && isset($_simplesamlphp_auth_saml_attributes['User Name'][0])) &&
           isset($_simplesamlphp_auth_saml_attributes['sn']) && isset($_simplesamlphp_auth_saml_attributes['sn'][0]) &&
           isset($_simplesamlphp_auth_saml_attributes['givenName']) && isset($_simplesamlphp_auth_saml_attributes['givenName'][0]) &&
-          isset($_simplesamlphp_auth_saml_attributes['c']) && isset($_simplesamlphp_auth_saml_attributes['c'][0]) &&
-          isset($_simplesamlphp_auth_saml_attributes['mail']) && isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
+          isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) && isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0]) &&
+          isset($_simplesamlphp_auth_saml_attributes['Email']) && isset($_simplesamlphp_auth_saml_attributes['Email'][0])) {
 
-        foreach ($_simplesamlphp_auth_saml_attributes['eduPersonAffiliation'] as $aff) {
+        if (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
+          $username = $_simplesamlphp_auth_saml_attributes['uid'][0];
+        }
+        else {
+          $username = $_simplesamlphp_auth_saml_attributes['User Name'][0];
+        }
+
+        foreach ($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'] as $aff) {
           if ($aff == 'student') {
             $affiliation = 'student';
             break;
@@ -2147,12 +2156,12 @@ function student_user($op, &$edit, &$account, $category = NULL) {
               $programme_nid = $row->nid;
             }
             else {
-              error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' has an invalid Programme: ' . $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0]);
+              error_log('simplesamlphp_auth uid: ' . $username . ' has an invalid Programme: ' . $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0]);
             }
           }
           if (!$programme_nid) {
             $affiliation = FALSE;
-            error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' has no Programme');
+            error_log('simplesamlphp_auth uid: ' . $username . ' has no Programme');
           }
         }
 
@@ -2431,8 +2440,8 @@ $ISO3166toEduERPCountries = array(
 ,'ZM' => "Zambia"
 ,'ZW' => "Zimbabwe");
 
-          if (!empty($ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]])) {
-            $node->field_profile_country_name[0]['value']      = $ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['c'][0]];
+          if (!empty($ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0]])) {
+            $node->field_profile_country_name[0]['value']      = $ISO3166toEduERPCountries[$_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0]];
           }
           else {
             $node->field_profile_country_name[0]['value']      = 'Nigeria';
@@ -2440,8 +2449,8 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_state_name_origin[0]['value']   = 'Foreign';
           $node->field_profile_lga_name[0]['value']            = 'Foreign';
           $node->field_profile_religion[0]['value']            = 'Others';
-          if (isset($_simplesamlphp_auth_saml_attributes['homePostalAddress']) && !empty($_simplesamlphp_auth_saml_attributes['homePostalAddress'][0])) {
-            $node->field_profile_permanent_address[0]['value'] = $_simplesamlphp_auth_saml_attributes['homePostalAddress'][0];
+          if (isset($_simplesamlphp_auth_saml_attributes['registeredAddress']) && !empty($_simplesamlphp_auth_saml_attributes['registeredAddress'][0])) {
+            $node->field_profile_permanent_address[0]['value'] = $_simplesamlphp_auth_saml_attributes['registeredAddress'][0];
           }
           else {
             $node->field_profile_permanent_address[0]['value'] = '-';
@@ -2506,7 +2515,7 @@ $ISO3166toEduERPCountries = array(
           $node->title                                      = 'Student Profile';
           $node->field_profile_first_choice[0]['nid']       = $programme_nid;
           $node->field_profile_health_status[0]['value']    = 'normal';
-          $node->field_profile_jambno[0]['value']           = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_jambno[0]['value']           = $username;
           $node->field_profile_kin_address[0]['value']      = '-';
           $node->field_profile_kin_city[0]['value']         = '-';
           $node->field_profile_kin_mobile[0]['value']       = '-';
@@ -2540,7 +2549,7 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_level_name[0]['value'] = ($node->field_profile_mode_of_entry[0]['value'] != 'DE') ? $level1 : $level2;
           if ($level1 < 100) $node->field_profile_level_name[0]['value'] = $level1; // Should be no DE for Part Time/Postgraduate
 
-          $node->field_profile_matno[0]['value']             = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_matno[0]['value']             = $username;
           $node->field_profile_mode_of_study[0]['value']     = 'Full_Time';
           $node->field_profile_olevel_insti1[0]['value']     = '-';
           $node->field_profile_olevel_qual_1[0]['value']     = 'Diploma';
@@ -2553,7 +2562,7 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_state_sponsor[0]['value']     = 'Foreign';
           $node->field_profile_year_exam_taken_1[0]['value'] = '2000-01-01T00:00:00';
           $node->field_profile_yearofentry[0]['value']       = substr(variable_get('eduerp_current_session', ''), 0, 4);
-          $node->field_university_email[0]['value']          = $_simplesamlphp_auth_saml_attributes['mail'][0];
+          $node->field_university_email[0]['value']          = $_simplesamlphp_auth_saml_attributes['Email'][0];
           node_save($node);
 
           // create programme information for the student
@@ -2569,20 +2578,20 @@ $ISO3166toEduERPCountries = array(
           $node->sticky                                     = 0;
           $node->comment                                    = 0;
           $node->title                                      = 'Staff Profile';
-          $node->field_profile_staff_no[0]['value']         = $_simplesamlphp_auth_saml_attributes['uid'][0];
+          $node->field_profile_staff_no[0]['value']         = $username;
           $node->field_profile_employment_type[0]['value']  = 'Full-Time';
           $node->field_profile_staff_type[0]['value']       = 'Teaching';
           $node->field_profile_appointment_date[0]['value'] = '2000-01-01T00:00:00';
           $node->field_profile_temporary_state[0]['value']  = 'Foreign';
           node_save($node);
         }
+        else {
+          error_log('simplesamlphp_auth uid: ' . $username . ' is neither student, staff or faculty');
+        }
       }
       else {
-        error_log('simplesamlphp_auth uid: ' . $_simplesamlphp_auth_saml_attributes['uid'][0] . ' is neither student, staff or faculty');
+        error_log('simplesamlphp_auth is missing key attributes');
       }
-    }
-    else {
-      error_log('simplesamlphp_auth is missing key attributes');
     }
   }
 }

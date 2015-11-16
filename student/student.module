@@ -2119,7 +2119,7 @@ error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
           isset($_simplesamlphp_auth_saml_attributes['sn']) && isset($_simplesamlphp_auth_saml_attributes['sn'][0]) &&
           isset($_simplesamlphp_auth_saml_attributes['givenName']) && isset($_simplesamlphp_auth_saml_attributes['givenName'][0]) &&
           isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) && isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0]) &&
-          isset($_simplesamlphp_auth_saml_attributes['Email']) && isset($_simplesamlphp_auth_saml_attributes['Email'][0])) {
+          isset($_simplesamlphp_auth_saml_attributes['mail']) && isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
 
         if (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
           $username = $_simplesamlphp_auth_saml_attributes['uid'][0];
@@ -2449,8 +2449,8 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_state_name_origin[0]['value']   = 'Foreign';
           $node->field_profile_lga_name[0]['value']            = 'Foreign';
           $node->field_profile_religion[0]['value']            = 'Others';
-          if (isset($_simplesamlphp_auth_saml_attributes['registeredAddress']) && !empty($_simplesamlphp_auth_saml_attributes['registeredAddress'][0])) {
-            $node->field_profile_permanent_address[0]['value'] = $_simplesamlphp_auth_saml_attributes['registeredAddress'][0];
+          if (isset($_simplesamlphp_auth_saml_attributes['homePostalAddress']) && !empty($_simplesamlphp_auth_saml_attributes['homePostalAddress'][0])) {
+            $node->field_profile_permanent_address[0]['value'] = $_simplesamlphp_auth_saml_attributes['homePostalAddress'][0];
           }
           else {
             $node->field_profile_permanent_address[0]['value'] = '-';
@@ -2562,7 +2562,7 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_state_sponsor[0]['value']     = 'Foreign';
           $node->field_profile_year_exam_taken_1[0]['value'] = '2000-01-01T00:00:00';
           $node->field_profile_yearofentry[0]['value']       = substr(variable_get('eduerp_current_session', ''), 0, 4);
-          $node->field_university_email[0]['value']          = $_simplesamlphp_auth_saml_attributes['Email'][0];
+          $node->field_university_email[0]['value']          = $_simplesamlphp_auth_saml_attributes['mail'][0];
           node_save($node);
 
           // create programme information for the student

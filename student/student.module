@@ -6,14 +6,14 @@
 function student_menu() {
 
   $items['student/clearance/post'] = array(
-    'title' => 'Student Clearance',
+    'title' => t('Student Clearance'),
     'page callback' => 'student_clearance',
     'access arguments' => array('student clearance'),
     'type' => MENU_CALLBACK,
   );
 
   $items['student/course'] = array(
-    'title' => 'Course Registration',
+    'title' => t('Course Registration'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('student_course_form'),
     'access arguments' => array('student course'),
@@ -22,7 +22,7 @@ function student_menu() {
   );
 
   $items['student/listcourses'] = array(
-    'title' => 'List My Courses',
+    'title' => t('List My Courses'),
     'page callback' => 'student_courses',
     'access arguments' => array('student course'),
     'type' => MENU_NORMAL_ITEM,
@@ -30,7 +30,7 @@ function student_menu() {
   );
 
   $items['student/liststudents'] = array(
-    'title' => 'List Students',
+    'title' => t('List Students'),
     'page callback' => 'drupal_goto',
     'page arguments' => array('liststudents'),
     'access arguments' => array('student list students'),
@@ -39,7 +39,7 @@ function student_menu() {
   );
 
   $items['student/hostelreservation'] = array(
-    'title' => 'Hostel Reservation',
+    'title' => t('Hostel Reservation'),
     'page callback' => 'student_hostel_reservation',
     'access arguments' => array('hostel_allocation user'),
     'type' => MENU_NORMAL_ITEM,
@@ -463,7 +463,7 @@ class courseselectionsclass {
       $this->form['warning2'] = array('#value' => 'Note that no courses for your current level are available for you to take for Semester 2<br />');
     }
 
-    $this->form['submit'] = array('#type' => 'submit' , '#value' => 'Submit');
+    $this->form['submit'] = array('#type' => 'submit' , '#value' => t('Submit'));
 
     // matches ({ from when object constructed
     $this->scriptforpage .= '});';

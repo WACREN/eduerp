@@ -6,7 +6,7 @@ include(drupal_get_path('module', 'eduerp') . '/eduerp_global.inc');
  */
 function staff_menu() {
   $items['staff/semester'] = array(
-    'title' => 'Semester Administration',
+    'title' => t('Semester Administration'),
     'page callback' => 'semester_admin',
     'access arguments' => array('staff register course'),
     'type' => MENU_NORMAL_ITEM,
@@ -14,28 +14,28 @@ function staff_menu() {
   );
 
   $items['staff/list']=array(
-    'title'=>'Staff List',
+    'title'=>t('Staff List'),
     'page callback' => 'search_staff_list',
     'access arguments' => array('staff list'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/department']=array(
-    'title'=>'Staff List',
+    'title'=>t('Staff List'),
     'page callback' => 'staff_department_list',
     'access arguments' => array('staff department list'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/viewlecturer']=array(
-    'title'=>'Staff List',
+    'title'=>t('Staff List'),
     'page callback' => 'staff_course_list',
     'access arguments' => array('staff view lecturer'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/view']=array(
-    'title'=>'Staff Summary',
+    'title'=>t('Staff Summary'),
     'page callback' => 'drupal_get_form',
     'page arguments'=>array('staff_view_form'),
     'access arguments' => array('staff list'),
@@ -43,7 +43,7 @@ function staff_menu() {
   );
 
   $items['staff/assignrole'] = array(
-    'title' => 'Staff Roles',
+    'title' => t('Staff Roles'),
     'page callback' => 'staff_assign_role',
     'access arguments' => array('staff assign role'),
     'type' => MENU_CALLBACK,
@@ -56,43 +56,43 @@ function staff_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['staff/createeditfaculty'] = array(
-    'title' => 'Create/Modify Faculty',
+    'title' => t('Create/Modify Faculty'),
     'page callback' => 'staff_create_edit_faculty',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK
   );
   $items['staff/createeditdept'] = array(
-    'title' => 'Create/Modify Department',
+    'title' => t('Create/Modify Department'),
     'page callback' => 'staff_create_edit_dept',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK
   );
   $items['staff/createeditcourse']=array(
-    'title'=>'Create/Modify a Course',
+    'title'=>t('Create/Modify a Course'),
     'page callback' => 'staff_create_edit_course',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
   $items['staff/createmodifyprog']=array(
-    'title'=>'Create/Modify a Programme',
+    'title'=>t('Create/Modify a Programme'),
     'page callback' => 'staff_create_edit_programme',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
   $items['staff/specifycourse']=array(
-    'title'=>'Specify Courses for a Programme',
+    'title'=>t('Specify Courses for a Programme'),
     'page callback' => 'staff_specify_course_for_programme',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
   $items['staff/verifycourse']=array(
-    'title'=>'Verify all Courses needed for a Programme are being run for a Semester',
+    'title'=>t('Verify all Courses needed for a Programme are being run for a Semester'),
     'page callback' => 'staff_verify_assigned_course',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
   $items['staff/studentprogress']=array(
-    'title'=>'Student Progress towards Graduation',
+    'title'=>t('Student Progress towards Graduation'),
     'page callback' => 'staff_student_progress_qualification',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
@@ -106,133 +106,133 @@ function staff_menu() {
   );
 
   $items['staff/unregstudents']=array(
-    'title'=>'List of Students who have Not Registered for a Semester',
+    'title'=>t('List of Students who have Not Registered for a Semester'),
     'page callback' => 'staff_unregistered_students',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/dropcoursereg']=array(
-    'title'=>'Mark a Course Registration as Dropped',
+    'title'=>t('Mark a Course Registration as Dropped'),
     'page callback' => 'staff_drop_registered_course',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/manualcoursereg']=array(
-    'title'=>'Manually Register a Student in a Course',
+    'title'=>t('Manually Register a Student in a Course'),
     'page callback' => 'staff_manual_course_reg',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/changeprogmme']=array(
-    'title'=>"Change a Student's Programme",
+    'title'=>t("Change a Student's Programme"),
     'page callback' => 'staff_change_student_programme',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/checkverifyprogmme']=array(
-    'title'=>"Check have all existing Courses required for all Programmes been Verified",
+    'title'=>t("Check have all existing Courses required for all Programmes been Verified"),
     'page callback' => 'staff_check_verify_programme_courses',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/missingcourses']=array(
-    'title'=>'Check for Missing Courses for a Semester',
+    'title'=>t('Check for Missing Courses for a Semester'),
     'page callback' => 'staff_check_for_missing_courses',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/schoolfeesadmin'] = array(
-    'title' => 'School Fees Administration',
+    'title' => t('School Fees Administration'),
     'page callback' => 'staff_school_fees_admin',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/createmodifyfeeitem'] = array(
-    'title' => 'Create / Modify School Fee Item',
+    'title' => t('Create / Modify School Fee Item'),
     'page callback' => 'staff_school_fees_create_modify_school_fee_item',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/createmodifyfeestup'] = array(
-    'title' => 'Create / Modify School Fee Setup',
+    'title' => t('Create / Modify School Fee Setup'),
     'page callback' => 'staff_school_fees_create_modify_school_fee_setup',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/updatesettings'] = array(
-    'title' => 'Update Fee Settings',
+    'title' => t('Update Fee Settings'),
     'page callback' => 'staff_school_fees_update_settings',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/scholarshippayment'] = array(
-    'title' => 'Authorise Scholarship',
+    'title' => t('Authorise Scholarship'),
     'page callback' => 'staff_school_fees_scholarship_payment',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/authoriseinstalment'] = array(
-    'title' => 'Authorise Instalment Payment',
+    'title' => t('Authorise Instalment Payment'),
     'page callback' => 'staff_school_fees_authorise_instalment_payment',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
    $items['staff/testattributes'] = array(
-    'title' => 'Testing Attributes and Options',
+    'title' => t('Testing Attributes and Options'),
     'page callback' => 'staff_school_fees_test_attr',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/createmodifschlshptypes'] = array(
-    'title' => 'Create / Modify Scholarship Types',
+    'title' => t('Create / Modify Scholarship Types'),
     'page callback' => 'staff_school_fees_create_modify_scholarship_types',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/removepending'] = array(
-    'title' => 'Remove Pending Invoices',
+    'title' => t('Remove Pending Invoices'),
     'page callback' => 'staff_school_fees_remove_pending_orders',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/add_once_off_invoice'] = array(
-    'title' => 'Add Once Off Invoice',
+    'title' => t('Add Once Off Invoice'),
     'page callback' => 'staff_add_once_off_invoice',
     'access arguments' => array('student payments'),
     'type' => MENU_CALLBACK
   );
 
   $items['staff/changeuncleared']=array(
-    'title'=>"Change Programme for Uncleared Candidate",
+    'title'=>t("Change Programme for Uncleared Candidate"),
     'page callback' => 'staff_change_uncleared_candidate_programme',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/archivestudent'] = array(
-    'title' => 'Archive a Student who does not yet have any Exam Marks',
+    'title' => t('Archive a Student who does not yet have any Exam Marks'),
     'page callback' => 'staff_archive_student',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
   );
 
   $items['staff/listopenprogrammes'] = array(
-    'title' => 'List of Programmes (& Level) currently Open for Course Registrations this Semester',
+    'title' => t('List of Programmes (& Level) currently Open for Course Registrations this Semester'),
     'page callback' => 'listopenprogrammes',
     'access arguments' => array('staff register course'),
     'type' => MENU_CALLBACK,
@@ -329,7 +329,7 @@ function _staff_ajax() {
       */
       $form['course_id'] = array(
         '#type' => 'select',
-        '#title' => 'Course',
+        '#title' => t('Course'),
         '#options' => $courses,
         '#attributes' => array('style' => 'width:100px'),
         '#required' => TRUE);
@@ -394,7 +394,7 @@ function _staff_ajax() {
       $form['level_name'] = array(
         '#type' => 'select',
         '#options' => $levels,
-        '#title' => 'New Start Level',
+        '#title' => t('New Start Level'),
         '#attributes' => array(
       'style' => 'width:100px'),
         '#required' => TRUE
@@ -414,7 +414,7 @@ function _staff_ajax() {
   	$form['chief_staff_nid'] = array(
       '#type' => 'select',
       '#options' => array(''=>'') + get_Staff_in_Department(),
-      '#title' => 'First Lecturer',
+      '#title' => t('First Lecturer'),
       '#required'  => TRUE,
       '#default_value' => $id
         );
@@ -448,7 +448,7 @@ function _staff_ajax() {
   	$form['block_nid'] = array(
       '#type' => 'select',
       '#options' => $blocks,
-      '#title' => 'Block Name',
+      '#title' => t('Block Name'),
       '#attributes' => array(
       'style' => 'width:100px'),
       '#prefix' => "<div id='shwblocks'>",
@@ -469,7 +469,7 @@ function _staff_ajax() {
         $rooms[$row->nid] = $row->field_room_name_value;
 
   	$form['room_nid'] = array(
-    '#title' => 'Room Name',
+    '#title' => t('Room Name'),
     '#type' => 'select',
     '#options' => $rooms,
     '#attributes' => array(
@@ -613,14 +613,14 @@ function department_role_form($form_state) {
   $form['role'] = array(
     '#type' => 'select',
     '#options' => eduerp_department_roles(),
-    '#title' => 'Role',
+    '#title' => t('Role'),
     '#default_value' => 'Department Examination Officer',
     '#required' => TRUE);
 
   $form['department'] = array(
     '#type' => 'select',
     '#options' => department(),
-    '#title' => 'Department',
+    '#title' => t('Department'),
     '#default_value' => $_SESSION['eduerpassignrole']->department_id,
     '#required' => TRUE);
     if (empty($_SESSION['eduerpassignrole']->department_id)) unset($form['department']['#default_value']);
@@ -647,14 +647,14 @@ function faculty_role_form($form_state) {
   $form['role'] = array(
     '#type' => 'select',
     '#options' => eduerp_faculty_roles(),
-    '#title' => 'Role',
+    '#title' => t('Role'),
     '#default_value' => 'Faculty Examination Officer',
     '#required' => TRUE);
 
   $form['faculty'] = array(
     '#type' => 'select',
     '#options' => faculty(),
-    '#title' => 'Faculty',
+    '#title' => t('Faculty'),
     '#default_value' => $_SESSION['eduerpassignrole']->college_id,
     '#required' => TRUE);
     if (empty($_SESSION['eduerpassignrole']->college_id)) unset($form['faculty']['#default_value']);
@@ -680,7 +680,7 @@ function university_role_form($form_state) {
   $form['role'] = array(
     '#type' => 'select',
     '#options' => eduerp_university_roles(),
-    '#title' => 'Role',
+    '#title' => t('Role'),
     '#default_value' => 'University Examination Viewer',
     '#required' => TRUE);
 
@@ -819,7 +819,7 @@ function current_roles_list_form($form_state) {
     $form['submit'] = array('#type' => 'submit', '#value' => "Remove any roles unchecked above from {$_SESSION['eduerpassignrole']->name}");
   }
   else {
-    $form['noroles'] = array('#value' => '<br />No Roles Assigned<br />');
+    $form['noroles'] = array('#value' => t('<br />No Roles Assigned<br />'));
   }
   return $form;
 }
@@ -848,7 +848,7 @@ function move_department_form($form_state) {
   $form['department'] = array(
     '#type' => 'select',
     '#options' => department(),
-    '#title' => 'Department',
+    '#title' => t('Department'),
     '#default_value' => $_SESSION['eduerpassignrole']->department_id,
     '#required' => TRUE);
     if (empty($_SESSION['eduerpassignrole']->department_id)) unset($form['department']['#default_value']);
@@ -1352,25 +1352,25 @@ function staff_view_form(&$obj) {
 
   $form['staff_name'] = array(
     '#type' => 'item',
-    '#title' => 'Staff Name',
+    '#title' => t('Staff Name'),
     '#value' => $data->staff_name);
   $form['staff_number'] = array(
-  '#title' => 'Staff Number',
+  '#title' => t('Staff Number'),
     '#type' => 'item',
     '#size' => 20,
     '#value' => $data->staff_no);
   $form['staff_department'] = array(
     '#type' => 'item',
-    '#title' => 'Department',
+    '#title' => t('Department'),
     '#value' => $data->field_department_name_value);
   $form['staff_room'] = array(
-    '#title' => 'Room',
+    '#title' => t('Room'),
     '#type' => 'item',
     '#size' => 20,
     '#value' => $data->room_number);
   $form['appointment_date'] = array(
     '#type' => 'item',
-    '#title' => 'Appointment date',
+    '#title' => t('Appointment date'),
     '#value' => $data->appointment_date);
   $form['staff_role'] = array(
     '#value' => '<b>Roles:</b><br />' . $data->role_name);
@@ -1528,16 +1528,16 @@ function semester_admin() {
   echo drupal_get_form('set_session_form');
   echo '<br /><hr /><br />';
 
-  echo '<a href="' . url('staff/missingcourses') . '">Check for Missing Courses for a Semester (no Lecturer or Timetable Assigned)</a>';
+  echo '<a href="' . url('staff/missingcourses') . '">' . t('Check for Missing Courses for a Semester (no Lecturer or Timetable Assigned)') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/checkverifyprogmme') . '">Check if all existing Courses required for all Programmes have been Verified (associated with the Programme)</a>';
+  echo '<a href="' . url('staff/checkverifyprogmme') . '">' . t('Check if all existing Courses required for all Programmes have been Verified (associated with the Programme)') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/schoolfeesadmin') . '">School Fees Administration</a>';
+  echo '<a href="' . url('staff/schoolfeesadmin') . '">' . t('School Fees Administration') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('admin/build/fees') . '">School Fees Report</a>';
+  echo '<a href="' . url('admin/build/fees') . '">' . t('School Fees Report') . '</a>';
   echo '<br /><br /><hr /><br />';
 
   //echo drupal_get_form('open_close_student_registration_form');
@@ -1546,52 +1546,52 @@ function semester_admin() {
   echo drupal_get_form('open_close_student_course_registration_form');
   echo '<br /><hr /><br />';
 
-  echo '<a href="' . url('grading/statsuni') . '">Grading Statistics for University</a>';
+  echo '<a href="' . url('grading/statsuni') . '">' . t('Grading Statistics for University') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/studentprogress') . '">Student Progress towards Graduation</a>';
+  echo '<a href="' . url('staff/studentprogress') . '">' . t('Student Progress towards Graduation') . '</a>';
   echo '<br /><br /><hr /><br />';
 
   echo '<a href="' . url('staff/gradesreport') . '">' . t('Grades Report') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/unregstudents') . '">List of Students who have Not Registered for a Semester</a>';
+  echo '<a href="' . url('staff/unregstudents') . '">' . t('List of Students who have Not Registered for a Semester') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/department') . '">View Departments and Courses</a>';
+  echo '<a href="' . url('staff/department') . '">' . t('View Departments and Courses') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('liststaff') . '">List Staff</a>';
+  echo '<a href="' . url('liststaff') . '">' . t('List Staff') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/createeditcourse') . '">Create or Modify Courses for a Department</a>';
+  echo '<a href="' . url('staff/createeditcourse') . '">' . t('Create or Modify Courses for a Department') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/createmodifyprog') . '">Create or Modify a University Programme</a>';
+  echo '<a href="' . url('staff/createmodifyprog') . '">' . t('Create or Modify a University Programme') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/createeditdept') . '">Create or Modify a Department</a>';
+  echo '<a href="' . url('staff/createeditdept') . '">' . t('Create or Modify a Department') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/createeditfaculty') . '">Create or Modify a Faculty</a>';
+  echo '<a href="' . url('staff/createeditfaculty') . '">' . t('Create or Modify a Faculty') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/list') . '">List Staff and Assign Roles</a>';
+  echo '<a href="' . url('staff/list') . '">' . t('List Staff and Assign Roles') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/manualcoursereg') . '">Manually Register a Student in a Course</a>';
+  echo '<a href="' . url('staff/manualcoursereg') . '">' . t('Manually Register a Student in a Course') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/dropcoursereg') . '">Mark a Student as Not being Required to take an Exam for a course they have enrolled in</a>';
+  echo '<a href="' . url('staff/dropcoursereg') . '">' . t('Mark a Student as Not being Required to take an Exam for a course they have enrolled in') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/changeprogmme') . '">Change a Student to a Different Programme</a>';
+  echo '<a href="' . url('staff/changeprogmme') . '">' . t('Change a Student to a Different Programme') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/changeuncleared') . '">Change Programme for Uncleared Candidate</a>';
+  echo '<a href="' . url('staff/changeuncleared') . '">' . t('Change Programme for Uncleared Candidate') . '</a>';
   echo '<br /><br /><hr /><br />';
 
-  echo '<a href="' . url('staff/archivestudent') . '">Archive a Student who does not yet have any Exam Marks</a>';
+  echo '<a href="' . url('staff/archivestudent') . '">' . t('Archive a Student who does not yet have any Exam Marks') . '</a>';
   echo '<br /><br /><hr /><br />';
 
   return ob_get_clean();
@@ -1608,7 +1608,7 @@ function semester_admin() {
 function set_session_form($form_state) {
   global $user;
 
-  $form['top'] = array('#value' => 'The current Session is: ' . variable_get('eduerp_current_session', '') . ' and current Semester is: ' . variable_get('eduerp_current_semester', ''));
+  $form['top'] = array('#value' => t('The current Session is: ') . variable_get('eduerp_current_session', '') . t(' and current Semester is: ') . variable_get('eduerp_current_semester', ''));
 
   if (staff_has_eduerp_role($user->uid, 0, 0, array('Registrar'))) {
     $current_year = intval(date('Y'));
@@ -1621,20 +1621,20 @@ function set_session_form($form_state) {
     $form['eduerp_current_session'] = array(
       '#type' => 'select',
       '#options' => $sessions,
-      '#title' => 'Current Session',
+      '#title' => t('Current Session'),
       '#default_value' => variable_get('eduerp_current_session', sprintf("%s/%s", $current_year - 1, $current_year)),
-      '#description' => 'Please specify the current session'
+      '#description' => t('Please specify the current session')
     );
 
     $form['eduerp_current_semester'] = array(
       '#type' => 'select',
       '#options' => array(1 => '1', 2 => '2'),
-      '#title' => 'Current Semester',
+      '#title' => t('Current Semester'),
       '#default_value' => variable_get('eduerp_current_semester', 1),
-      '#description' => 'Please specify the current semester'
+      '#description' => t('Please specify the current semester')
     );
 
-    $form['submit'] = array('#type' => 'submit', '#value' => 'Set the Session and Semester');
+    $form['submit'] = array('#type' => 'submit', '#value' => t('Set the Session and Semester'));
   }
   return $form;
 }
@@ -1675,18 +1675,18 @@ function open_close_student_registration_form($form_state) {
 
   // We could add a from element with more options that just on/off
   if (variable_get('user_register', 1)) { // This a system setting (0 => no self registrations, 1 => yes, 2 => yes, admin approval needed)
-    $open = 'Open';
-    $closeverb = 'Close';
+    $open = t('Open');
+    $closeverb = t('Close');
   }
   else {
-    $open = 'Closed';
-    $closeverb = 'Open';
+    $open = t('Closed');
+    $closeverb = t('Open');
   }
 
   $form['top'] = array('#value' => "Student Registrations and Initial Payment are $open for the Session " . variable_get('eduerp_current_session', '') . '<br />');
 
   if (staff_has_eduerp_role($user->uid, 0, 0, array('Registrar'))) {
-    $form['submit'] = array('#type' => 'submit', '#value' => "$closeverb Student Registrations for the Session");
+    $form['submit'] = array('#type' => 'submit', '#value' => "$closeverb " . t("Student Registrations for the Session"));
   }
   return $form;
 }
@@ -1718,7 +1718,7 @@ function open_close_student_registration_form_submit($form, &$form_state) {
 function open_close_student_course_registration_form($form_state) {
   global $user;
 
-  $form['top'] = array('#value' => '<a href="' . url('staff/listopenprogrammes') . '">Click here for a list of Programmes (& Level) currently Open for Course Registrations this Semester</a>');
+  $form['top'] = array('#value' => '<a href="' . url('staff/listopenprogrammes') . '">' . t('Click here for a list of Programmes (& Level) currently Open for Course Registrations this Semester') . '</a>');
 
   if (staff_has_eduerp_role($user->uid, 0, 0, array('Registrar'))) {
 
@@ -1727,8 +1727,8 @@ function open_close_student_course_registration_form($form_state) {
         $form['programmestoopen'] = array(
           '#type' => 'select',
           '#options' => $programmestoopen,
-          '#title' => 'Programme(level) to Open OR Open ALL',
-          '#description' => 'Please specify one Programme Level to Open for Course Registrations or Open ALL'
+          '#title' => t('Programme(level) to Open OR Open ALL'),
+          '#description' => t('Please specify one Programme Level to Open for Course Registrations or Open ALL')
         );
     }
 
@@ -1737,8 +1737,8 @@ function open_close_student_course_registration_form($form_state) {
         $form['programmestoclose'] = array(
           '#type' => 'select',
           '#options' => $programmestoclose,
-          '#title' => 'Programme(level) to Close OR Close ALL',
-          '#description' => 'Please specify one Programme Level to Close for Course Registrations or Close ALL'
+          '#title' => t('Programme(level) to Close OR Close ALL'),
+          '#description' => t('Please specify one Programme Level to Close for Course Registrations or Close ALL')
         );
     }
 
@@ -1746,7 +1746,7 @@ function open_close_student_course_registration_form($form_state) {
     elseif (empty($programmestoopen)) $openverb = 'Close';
     else $openverb = 'Open or Close';
 
-    $form['submit'] = array('#type' => 'submit', '#value' => "$openverb Course Registrations for this Semester");
+    $form['submit'] = array('#type' => 'submit', '#value' => "$openverb " . t("Course Registrations for this Semester"));
   }
   return $form;
 }
@@ -2268,9 +2268,9 @@ function staff_create_edit_faculty_form() {
       $fac_edit_record = db_fetch_object($result);
     }
   }
-  $form['#title'] = 'Create New Faculty';
+  $form['#title'] = t('Create New Faculty');
   $form['faculty_name'] = array(
-    '#title' => 'Faculty Name',
+    '#title' => t('Faculty Name'),
     '#type' => 'textfield',
     '#size' => 40,
     '#required' => TRUE
@@ -2278,7 +2278,7 @@ function staff_create_edit_faculty_form() {
   if ($fac_edit_record) $form['faculty_name']['#value'] = $fac_edit_record->name;
 
   $form['faculty_abbreviation'] = array(
-    '#title' => 'Faculty Code',
+    '#title' => t('Faculty Code'),
     '#type' => 'textfield',
     '#size' => 6,
     '#required' => TRUE
@@ -2286,7 +2286,7 @@ function staff_create_edit_faculty_form() {
   if ($fac_edit_record) $form['faculty_abbreviation']['#value'] = $fac_edit_record->abbr;
 
   $form['faculty_subdomain'] = array(
-    '#title' => 'Faculty E-mail Subdomain e.g. science.xyz.com',
+    '#title' => t('Faculty E-mail Subdomain e.g. science.xyz.com'),
     '#type' => 'textfield',
     '#size' => 50,
     //'#required' => TRUE
@@ -2294,10 +2294,10 @@ function staff_create_edit_faculty_form() {
   if ($fac_edit_record) $form['faculty_subdomain']['#value'] = $fac_edit_record->fac_subdomain;
 
   $form['submit'] = array(
-    '#value' => 'Create Faculty',
+    '#value' => t('Create Faculty'),
     '#type' => 'submit'
   );
-  if ($fac_edit_record) $form['submit']['#value'] = 'Update Faculty';
+  if ($fac_edit_record) $form['submit']['#value'] = t('Update Faculty');
 
   return $form;
 }
@@ -2312,13 +2312,13 @@ function staff_create_edit_faculty_form() {
  * @return array Drupal Form
  */
 function staff_update_faculty_form() {
-  $form['#title'] = 'Update Faculty';
+  $form['#title'] = t('Update Faculty');
   $form['faculty_id'] = array(
     '#type' => 'select',
     '#options' => faculty(),
-    '#title' => 'Faculty Name');
+    '#title' => t('Faculty Name'));
   $form['submit'] = array(
-    '#value' => 'Modify Faculty',
+    '#value' => t('Modify Faculty'),
     '#type' => 'submit'
   );
   return $form;
@@ -2334,13 +2334,13 @@ function staff_update_faculty_form() {
  * @return array Drupal Form
  */
 function staff_update_dept_form() {
-  $form['#title'] = 'Update Department';
+  $form['#title'] = t('Update Department');
   $form['department_nid'] = array(
     '#type' => 'select',
     '#options' => department(),
-    '#title' => 'Department Name');
+    '#title' => t('Department Name'));
   $form['submit'] = array(
-    '#value' => 'Modify Department',
+    '#value' => t('Modify Department'),
     '#type' => 'submit'
   );
   return $form;
@@ -2512,10 +2512,10 @@ function staff_create_edit_dept_form() {
     }
   }
 
-  $form['#title'] = 'Create New Department';
+  $form['#title'] = t('Create New Department');
   $form['faculty_nid'] = array(
     '#type' => 'select',
-    '#title' => 'Faculty Name');
+    '#title' => t('Faculty Name'));
   if ($dept_edit_record){
     $form['faculty_nid']['#default_value'] = $dept_edit_record->college_nid;
     $form['faculty_nid']['#options'] = faculty($dept_edit_record->college_nid);
@@ -2524,7 +2524,7 @@ function staff_create_edit_dept_form() {
     $form['faculty_nid']['#options'] = faculty();
 
   $form['department_name'] = array(
-    '#title' => 'Department Name',
+    '#title' => t('Department Name'),
     '#type' => 'textfield',
     '#size' => 100,
     '#required' => TRUE
@@ -2532,7 +2532,7 @@ function staff_create_edit_dept_form() {
   if ($dept_edit_record) $form['department_name']['#value'] = $dept_edit_record->dept_name;
 
   $form['department_code'] = array(
-    '#title' => 'Department Code',
+    '#title' => t('Department Code'),
     '#type' => 'textfield',
     '#size' => 20,
     //'#required' => TRUE
@@ -2540,10 +2540,10 @@ function staff_create_edit_dept_form() {
   if ($dept_edit_record) $form['department_code']['#value'] = $dept_edit_record->dept_code;
 
   $form['submit'] = array(
-    '#value' => 'Create Department',
+    '#value' => t('Create Department'),
     '#type' => 'submit'
   );
-  if ($dept_edit_record) $form['submit']['#value'] = 'Update Department';
+  if ($dept_edit_record) $form['submit']['#value'] = t('Update Department');
 
   return $form;
 }
@@ -2729,13 +2729,13 @@ function staff_create_edit_course() {
  */
 function staff_create_edit_course_select_dept_form($form_state) {
 
-  $form['#title'] = 'Select Department';
+  $form['#title'] = t('Select Department');
   $form['department_nid'] = array(
     '#type' => 'select',
     '#options' => department(),
-    '#title' => 'Department Name');
+    '#title' => t('Department Name'));
   $form['submit'] = array(
-    '#value' => 'Continue',
+    '#value' => t('Continue'),
     '#type' => 'submit'
   );
 
@@ -3209,15 +3209,15 @@ function staff_create_course_form() {
    }
   }
 
-  $form['#title'] = 'Create New Course';
+  $form['#title'] = t('Create New Course');
   $form['course_level'] = array(
     '#type' => 'select',
     '#options' => course_levels(),
-    '#title' => 'Course Level');
+    '#title' => t('Course Level'));
   if ($course) $form['course_level']['#default_value'] = $course->course_level;
 
   $form['course_code'] = array(
-    '#title' => 'Course Code',
+    '#title' => t('Course Code'),
     '#type' => 'textfield',
     '#size' => 50,
     '#required' => TRUE
@@ -3225,7 +3225,7 @@ function staff_create_course_form() {
   if ($course) $form['course_code']['#value'] = $course->course_code;
 
   $form['course_title'] = array(
-    '#title' => 'Course Title',
+    '#title' => t('Course Title'),
     '#type' => 'textfield',
     '#size' => 255,
     '#required' => TRUE
@@ -3233,7 +3233,7 @@ function staff_create_course_form() {
   if ($course) $form['course_title']['#value'] = $course->course_title;
 
   $form['course_description'] = array(
-    '#title' => 'Course Description',
+    '#title' => t('Course Description'),
     '#type' => 'textarea',
     '#size' => 255,
     '#required' => TRUE
@@ -3241,7 +3241,7 @@ function staff_create_course_form() {
   if ($course) $form['course_description']['#value'] = $course->course_description;
 
   $form['credit_load'] = array(
-    '#title' => 'Credit Load',
+    '#title' => t('Credit Load'),
     '#type' => 'textfield',
     '#size' => 3,
     '#required' => TRUE
@@ -3249,14 +3249,14 @@ function staff_create_course_form() {
   if ($course) $form['credit_load']['#value'] = $course->credit_load;
 
   $form['prerequisites_codes'] = array(
-    '#title' => 'Prerequisite Codes - List of course_code(s), comma separated that have to be completed before this course, code1/code2/code3 will be alternatives, one of which must be completed',
+    '#title' => t('Prerequisite Codes - List of course_code(s), comma separated that have to be completed before this course, code1/code2/code3 will be alternatives, one of which must be completed'),
     '#type' => 'textfield',
     '#size' => 255
   );
   if ($course) $form['prerequisites_codes']['#value'] = $course->prerequisite_codes;
 
     $form['prerequisite_desc'] = array(
-    '#title' => 'Prerequisite Description - Description of prerequisites',
+    '#title' => t('Prerequisite Description - Description of prerequisites'),
     '#type' => 'textarea',
     '#size' => 255
   );
@@ -3265,14 +3265,14 @@ function staff_create_course_form() {
   $form['course_semester'] = array(
     '#type' => 'select',
     '#options' => semesters(),
-    '#title' => 'Course Semester',
+    '#title' => t('Course Semester'),
     '#required' => TRUE);
   if ($course) $form['course_semester']['#default_value'] = $course->course_semester;
 
   if (isset($_POST['showFullForm'])) {
     //$form['showFullForm'] = array('#showFullForm' => '1');/*
     $form['showFullForm'] = array(
-    '#title' => 'Course Description',
+    '#title' => t('Course Description'),
     '#type' => 'hidden',
     '#default_value'=> 1
    );
@@ -3312,10 +3312,10 @@ function staff_create_course_form() {
  if(isset($_SESSION['eduerp_course_grade_weightings'])) unset($_SESSION['eduerp_course_grade_weightings']);
 
   $form['submit'] = array(
-    '#value' => 'Create Course',
+    '#value' => t('Create Course'),
     '#type' => 'submit'
   );
-  if ($authorizeCourseEdit) $form['submit']['#value'] = 'Update Course';
+  if ($authorizeCourseEdit) $form['submit']['#value'] = t('Update Course');
 
   return $form;
 }
@@ -3523,15 +3523,15 @@ function staff_create_course_form_submit($form, &$form_state){
  * @return array Drupal Form
  */
 function staff_edit_course_form(){
-  $form['#title'] = 'Update Course';
+  $form['#title'] = t('Update Course');
 
     $form['course_nid'] = array(
       '#type' => 'select',
       '#options' => course(arg(2)),
-      '#title' => 'Course Code');
+      '#title' => t('Course Code'));
 
     $form['submit'] = array(
-      '#value' => 'Modify Course',
+      '#value' => t('Modify Course'),
       '#type' => 'submit'
     );
 
@@ -3596,10 +3596,10 @@ function semesters() {
  * @return array Drupal Form
  */
 function staff_create_course_mini_form() {
-  $form['#title'] = 'Start Course Creation';
+  $form['#title'] = t('Start Course Creation');
 
   $form['submit'] = array(
-    '#value' => 'Start Course Creation',
+    '#value' => t('Start Course Creation'),
     '#type' => 'submit'
   );
 
@@ -3762,12 +3762,12 @@ function staff_assign_course_form() {
     $courses = array(0 => '') + $courses;
   }
 
-  $form['#title'] = 'Assign Lecturers and Timetable for Course';
+  $form['#title'] = t('Assign Lecturers and Timetable for Course');
 
   $form['course_nid'] = array(
   '#type' => 'select',
   '#options' => $courses,
-  '#title' => 'Course Code',
+  '#title' => t('Course Code'),
   '#ahah' => array('path' => 'staff/ajax/getdeflecturer', 'event' => 'change', 'method' => 'replace', 'wrapper' => 'getdeflecturerz'),
   '#required'  => TRUE
   );
@@ -3777,7 +3777,7 @@ function staff_assign_course_form() {
   $form['chief_staff_nid'] = array(
       '#type' => 'select',
       '#options' => array(''=>'') + get_Staff_in_Department(), //arg(2)),
-      '#title' => 'First Lecturer',
+      '#title' => t('First Lecturer'),
       '#attributes' => array(
       'style' => 'width:100px'),
       '#prefix' => "<div id='getdeflecturerz'>",
@@ -3790,13 +3790,13 @@ function staff_assign_course_form() {
   $form['assist_staff_nid'] = array(
       '#type' => 'select',
       '#options' => array(0=>'N/A') + get_Staff_in_Department(), //arg(2)),
-      '#title' => 'Second Lecturer'
+      '#title' => t('Second Lecturer')
       );
   if ($course_instance) $form['assist_staff_nid']['#default_value'] = (int) $course_instance->field_lecturer_alternate_uid ;
 
    $form['timetable'] = array(
       '#type' => 'textarea',
-      '#title' => 'Time Table',
+      '#title' => t('Time Table'),
       '#required' => TRUE
       );
    if ($course_instance) $form['timetable']['#default_value'] = $course_instance->field_timetable_value;
@@ -3804,7 +3804,7 @@ function staff_assign_course_form() {
    if (!$course_instance) {
      $form['allow_twice'] = array(
         '#type' => 'checkbox',
-        '#title' => 'Allow me run the same course twice in the same semester',
+        '#title' => t('Allow me run the same course twice in the same semester'),
         '#default_value' => FALSE
         );
    }
@@ -3815,10 +3815,10 @@ function staff_assign_course_form() {
       );
 
   $form['submit'] = array(
-      '#value' => 'Assign',
+      '#value' => t('Assign'),
       '#type' => 'submit'
     );
-  if (arg(3)) $form['submit']['#value'] = "Update Assignment";
+  if (arg(3)) $form['submit']['#value'] = t("Update Assignment");
   if(isset($_SESSION['eduerp_fix_course'])) unset($_SESSION['eduerp_fix_course']);
   return $form;
 }
@@ -3832,24 +3832,24 @@ function staff_assign_course_form() {
  * @return array Drupal Form
  */
 function staff_assign_course_proceed_form() {
-  $form['#title'] = 'Start Assigning Lecturers to Courses';
+  $form['#title'] = t('Start Assigning Lecturers to Courses');
 
   $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
-    '#title' => 'Session',
+    '#title' => t('Session'),
     '#default_value'=>variable_get('eduerp_current_session', ''),
     '#required' => TRUE,
     );
   $form['semester'] = array(
     '#type' => 'select',
     '#options' => array(1=>'1', 2=>'2', 3=>'3'),
-    '#title' => 'Semester',
+    '#title' => t('Semester'),
     '#default_value'=>variable_get('eduerp_current_semester', ''),
     '#required' => TRUE,
     );
   $form['submit'] = array(
-    '#value' => 'Start Assigning Lecturers to Courses',
+    '#value' => t('Start Assigning Lecturers to Courses'),
     '#type' => 'submit'
   );
 
@@ -3975,7 +3975,7 @@ function staff_assign_course_form_submit($form, &$form_state) {
  * @return array Drupal Form
  */
 function staff_edit_assigned_course_form(){
-  $form['#title'] = 'Update Assigned Courses';
+  $form['#title'] = t('Update Assigned Courses');
  //get all assigned courses for the department
  $assigned = get_Assigned_Courses($_SESSION['eduerp_assign_course_session'], arg(2), $_SESSION['eduerp_assign_course_semester']);
  if (db_affected_rows() > 0) {
@@ -3990,13 +3990,13 @@ function staff_edit_assigned_course_form(){
  $form['course_instance_nid'] = array(
       '#type' => 'select',
       '#options' => $assignedCourses,
-      '#title' => 'Course Code');
+      '#title' => t('Course Code'));
  $form['showCourseAssignment'] = array( //used to keep showing the form
       '#type' => 'hidden',
       '#default_value' => 1
       );
  $form['submit'] = array(
-      '#value' => 'Modify Assignment',
+      '#value' => t('Modify Assignment'),
       '#type' => 'submit'
     );
 
@@ -4352,9 +4352,9 @@ function staff_create_programme_form() {
     }
   }
 
-  $form['#title'] = 'Create New Programme';
+  $form['#title'] = t('Create New Programme');
   $form['programme_name'] = array(
-    '#title' => 'Programme Name',
+    '#title' => t('Programme Name'),
     '#type' => 'textfield',
     '#size' => 100,
     '#required' => TRUE
@@ -4363,7 +4363,7 @@ function staff_create_programme_form() {
 
   $form['programme_abbr'] = array(
     '#type' => 'textfield',
-    '#title' => 'Programme Abbreviation',
+    '#title' => t('Programme Abbreviation'),
     '#required' => TRUE
   );
   if ($programme) $form['programme_abbr']['#default_value'] = $programme->programme_abbr;
@@ -4379,11 +4379,11 @@ function staff_create_programme_form() {
   $form['department_nid'] = array(
     '#type' => 'select',
     '#options' => department($id),
-    '#title' => 'Department');
+    '#title' => t('Department'));
   if ($programme) $form['department_nid']['#default_value'] = $programme->department_nid;
 
   $form['duration'] = array(
-    '#title' => 'Programme Duration - Duration in years of this programme e.g. 4',
+    '#title' => t('Programme Duration - Duration in years of this programme e.g. 4'),
     '#type' => 'textfield',
     '#size' => 2,
     '#required' => TRUE
@@ -4391,7 +4391,7 @@ function staff_create_programme_form() {
   if ($programme) $form['duration']['#value'] = $programme->duration;
 
   $form['max_duration'] = array(
-    '#title' => 'Maximum Duration - Maximum semesters a student may spend completing this programme e.g. 12',
+    '#title' => t('Maximum Duration - Maximum semesters a student may spend completing this programme e.g. 12'),
     '#type' => 'textfield',
     '#size' => 2,
     '#required' => TRUE
@@ -4399,7 +4399,7 @@ function staff_create_programme_form() {
   if ($programme) $form['max_duration']['#value'] = $programme->max_duration;
 
   $form['min_credit_load'] = array(
-    '#title' => 'Minimum Credit Load - Minimum completed credit load before graduation',
+    '#title' => t('Minimum Credit Load - Minimum completed credit load before graduation'),
     '#type' => 'textfield',
     '#size' => 4,
     '#required' => TRUE
@@ -4409,22 +4409,22 @@ function staff_create_programme_form() {
   $form['programme_type'] = array(
     '#type' => 'select',
     '#options' => programme_types(),
-    '#title' => 'Programme Type',
+    '#title' => t('Programme Type'),
     '#required' => TRUE);
   if ($programme) $form['programme_type']['#default_value'] = $programme->programme_type;
 
   $form['start_level'] = array(
     '#type' => 'select',
     '#options' => array(100 => '100', 1 => '1'),
-    '#title' => 'Start Level',
+    '#title' => t('Start Level'),
     '#required' => TRUE);
   if (isset($programmeInfo->start_level)) $form['start_level']['#default_value'] = $programmeInfo->start_level;
 
   $form['submit'] = array(
-    '#value' => 'Continue',
+    '#value' => t('Continue'),
     '#type' => 'submit'
   );
-  if ($authorizeEdit || isset($_POST['showOn'])) $form['submit']['#value'] = 'Continue Update Programme';
+  if ($authorizeEdit || isset($_POST['showOn'])) $form['submit']['#value'] = t('Continue Update Programme');
 
   return $form;
 }
@@ -4515,7 +4515,7 @@ function staff_create_programme_form2() {
   global $authorizeEdit;
   if (isset($_SESSION['eduerp_bkinfo'])) {
 
-    $form['#title'] = 'Create New Programme continued...';
+    $form['#title'] = t('Create New Programme continued...');
     if ($authorizeEdit && empty($_POST['credit_desc11'])) {
       //check if previous rec exists in program_level_semester table
       $result = db_query("SELECT * FROM {program_level_semester} WHERE programme_id = %d ORDER BY level", arg(2));
@@ -4532,7 +4532,7 @@ function staff_create_programme_form2() {
     for ($i = 1; $i <= $_SESSION['eduerp_bkinfo']->duration; $i++) {
       for ($p = 1; $p <= 2; $p++) {
         $form['credit_desc'.$i.$p] = array(
-          '#title' => 'Level '. $i * $_SESSION['eduerp_bkinfo']->start_level .', Semester '. $p .':<br /> Minimum and Maximum Credit Load a Student is allowed select when Registering Courses for this Semester. Note: (The Min and Max must be separated by \', \' e.g. 10,60) ',
+          '#title' => t('Level '). $i * $_SESSION['eduerp_bkinfo']->start_level .t(', Semester '). $p .t(':<br /> Minimum and Maximum Credit Load a Student is allowed select when Registering Courses for this Semester. Note: (The Min and Max must be separated by \', \' e.g. 10,60) '),
           '#type' => 'textfield',
           '#size' => 10,
           '#required' => TRUE
@@ -4550,10 +4550,10 @@ function staff_create_programme_form2() {
   );
 
     $form['submit'] = array(
-      '#value' => 'Create Programme',
+      '#value' => t('Create Programme'),
       '#type' => 'submit'
     );
-    if ($authorizeEdit) $form['submit']['#value'] = 'Update Programme';
+    if ($authorizeEdit) $form['submit']['#value'] = t('Update Programme');
 
     return $form;
   }
@@ -4692,13 +4692,13 @@ function staff_create_programme_form2_submit($form, &$form_state) {
 function staff_create_programme_back_form() {
   //$form['#title'] = 'Create New Programme Back';
   $form['showOn'] = array(//keep showing the form
-    '#title' => 'Show On',
+    '#title' => t('Show On'),
     '#type' => 'hidden',
     '#default_value' => 1
   );
 
   $form['submit'] = array(
-      '#value' => 'go Back',
+      '#value' => t('go Back'),
       '#type' => 'submit'
     );
 
@@ -4735,9 +4735,9 @@ function staff_create_programme_back_form_submit($form, &$form_state) {
  * @deprecated
  */
 function staff_create_programme_cancel_form() {
-  $form['#title'] = 'Create New Programme Cancel';
+  $form['#title'] = t('Create New Programme Cancel');
   $form['submit'] = array(
-      '#value' => 'Cancel',
+      '#value' => t('Cancel'),
       '#type' => 'submit'
     );
 
@@ -4789,15 +4789,15 @@ function programme_types() {
  * @return array Drupal Form
  */
 function staff_modify_programme_form(){
-  $form['#title'] = 'Modify Programme';
+  $form['#title'] = t('Modify Programme');
 
     $form['programme_nid'] = array(
       '#type' => 'select',
       '#options' => programme(),
-      '#title' => 'Programme Name');
+      '#title' => t('Programme Name'));
 
     $form['submit'] = array(
-      '#value' => 'Modify Programme',
+      '#value' => t('Modify Programme'),
       '#type' => 'submit'
     );
 
@@ -5257,7 +5257,7 @@ function staff_assign_course_to_programme_form() {
   $form['programme_id'] = array(
     '#type' => 'select',
     '#options' => array($programmeInfo->programme_nid => $programmeInfo->programme_name), //staff_prg(),
-    '#title' => 'Programme',
+    '#title' => t('Programme'),
     '#attributes' => array(
       'style' => 'width:100px'),
     '#required' => TRUE,
@@ -5268,7 +5268,7 @@ function staff_assign_course_to_programme_form() {
   $form['level'] = array(
     '#type' => 'select',
     '#options' => array('' => '' ) + $levels,
-    '#title' => 'Level',
+    '#title' => t('Level'),
     '#required' => TRUE,
     '#ahah' => array('path' => 'staff/ajax/course', 'event' => 'change', 'method' => 'replace', 'wrapper' => 'courses'),
     '#form_panel_col' => 2,
@@ -5278,7 +5278,7 @@ function staff_assign_course_to_programme_form() {
 
   $form['semester'] = array(
     '#type' => 'select',
-    '#title' => 'Semester',
+    '#title' => t('Semester'),
     '#required' => TRUE,
     '#options' => get_semester_from_programme_level_semester($programmeInfo->programme_nid),
     '#form_panel_col' => 3,
@@ -5288,7 +5288,7 @@ function staff_assign_course_to_programme_form() {
 
   $form['course_id'] = array(
     '#type' => 'select',
-    '#title' => 'Course Code',
+    '#title' => t('Course Code'),
     '#options' => staff_course(),
     '#attributes' => array(
       'style' => 'width:100px'),
@@ -5304,7 +5304,7 @@ function staff_assign_course_to_programme_form() {
   $form['course_type_id'] = array(
     '#type' => 'select',
     '#options' => array( 1 => 'Core', 2 => 'Elective'),
-    '#title' => 'Course Type',
+    '#title' => t('Course Type'),
     '#required' => TRUE,
     '#form_panel_col' => 5,
     '#form_panel_row' => 2);
@@ -5312,7 +5312,7 @@ function staff_assign_course_to_programme_form() {
 
   $form['credit_load'] = array(
     '#type' => 'textfield',
-    '#title' => 'Credit Load',
+    '#title' => t('Credit Load'),
     '#size' => 3,
     '#form_panel_col' => 6,
     '#form_panel_row' => 2);
@@ -5321,7 +5321,7 @@ function staff_assign_course_to_programme_form() {
   $form['user_id'] = array(
     '#type' => 'select',
     '#options' => array('' => '' ) + get_Staff_in_Department(), //lecturer(),
-    '#title' => 'Lecturer',
+    '#title' => t('Lecturer'),
     '#required' => FALSE,
     '#form_panel_col' => 7,
     '#form_panel_row' => 2);
@@ -5340,7 +5340,7 @@ function staff_assign_course_to_programme_form() {
       '#type' => 'submit',
       '#form_panel_col' => 1,
       '#form_panel_row' => 5);
-    if(arg(3)) $form['jambsubn']['#value'] = "Update";;
+    if(arg(3)) $form['jambsubn']['#value'] = t("Update");;
   }
   $form['sep'] = array(
     '#type' => 'item',
@@ -5464,18 +5464,18 @@ function get_semester_from_programme_level_semester($programme_nid) {
  * @return array Drupal Form
  */
 function staff_specify_course_proceed_form() {
-  $form['#title'] = 'Start Specifying Courses';
+  $form['#title'] = t('Start Specifying Courses');
 
   $form['sprogramme_nid'] = array(
       '#type' => 'select',
       '#options' => programme(),
-      '#title' => 'Programme Name');
+      '#title' => t('Programme Name'));
   $form['showCourseAssignment'] = array(
        '#type' => 'hidden',
        '#default_value' => 1
    );
   $form['submit'] = array(
-    '#value' => 'Start Specifying Course(s)',
+    '#value' => t('Start Specifying Course(s)'),
     '#type' => 'submit'
   );
 
@@ -5500,29 +5500,29 @@ function staff_specify_course_proceed_form_submit($form, &$form_state) {
  * @return array Drupal Form
  */
 function staff_verify_course_proceed_form() {
-  $form['#title'] = 'Start Verifying Courses';
+  $form['#title'] = t('Start Verifying Courses');
 
   $form['session'] = array(
       '#type' => 'select',
       '#options' => get_all_sessions(),
-      '#title' => 'Session');
+      '#title' => t('Session'));
 
   $form['vprogramme_nid'] = array(
       '#type' => 'select',
       '#options' => programme(),
-      '#title' => 'Programme Name');
+      '#title' => t('Programme Name'));
 
   $form['semester'] = array(
       '#type' => 'select',
       '#options' => array(1 => '1', 2 => '2'),
-      '#title' => 'Semester');
+      '#title' => t('Semester'));
 
   $form['showCourseAssignment'] = array(
        '#type' => 'hidden',
        '#default_value' => 1
    );
   $form['submit'] = array(
-    '#value' => 'Start Verifying Course(s)',
+    '#value' => t('Start Verifying Course(s)'),
     '#type' => 'submit'
   );
 
@@ -5764,31 +5764,31 @@ function staff_student_progress_qualification() {
  */
 function show_progress_qualification_form() {
   global $eduerp_levels, $eduerp_sessions, $eduerp_programmes;
-  $form['#title'] = 'Create New Programme';
+  $form['#title'] = t('Create New Programme');
 
   $form['session'] = array(
     '#type' => 'select',
     '#options' => $eduerp_sessions,
     '#required' => TRUE,
-    '#title' => 'Session');
+    '#title' => t('Session'));
   if ($_SESSION['eduerp_qualification']) $form['session']['#default_value'] = $_SESSION['eduerp_qualification']['session'];
 
   $form['programme_nid'] = array(
     '#type' => 'select',
     '#options' => $eduerp_programmes,
     '#required' => TRUE,
-    '#title' => 'Programme Name');
+    '#title' => t('Programme Name'));
   if ($_SESSION['eduerp_qualification']) $form['programme_nid']['#default_value'] = $_SESSION['eduerp_qualification']['programme_nid'];
 
   $form['level'] = array(
     '#type' => 'select',
     '#options' => $eduerp_levels,
     '#required' => TRUE,
-    '#title' => 'Level');
+    '#title' => t('Level'));
   if ($_SESSION['eduerp_qualification']) $form['level']['#default_value'] = $_SESSION['eduerp_qualification']['level'];
 
   $form['submit'] = array(
-      '#value' => 'Get Report',
+      '#value' => t('Get Report'),
       '#type' => 'submit'
     );
   return $form;
@@ -6872,24 +6872,24 @@ function display_list_of_unregistered_students(&$result) {
  */
 function show_unregistered_course_form() {
   global $sessions;
-  $form['#title'] = 'Unregistered Course form';
+  $form['#title'] = t('Unregistered Course form');
 
   $form['session'] = array(
     '#type' => 'select',
     '#options' => $sessions,
     '#required' => TRUE,
-    '#title' => 'Session');
+    '#title' => t('Session'));
   if ($_SESSION['eduerp_unreg']) $form['session']['#default_value'] = $_SESSION['eduerp_unreg']['session'];
 
   $form['semester'] = array(
     '#type' => 'select',
     '#options' => array(1=>'1', 2=>'2'),
     '#required' => TRUE,
-    '#title' => 'Semester');
+    '#title' => t('Semester'));
   if ($_SESSION['eduerp_unreg']) $form['semester']['#default_value'] = $_SESSION['eduerp_unreg']['semester'];
 
   $form['submit'] = array(
-      '#value' => 'Check Now',
+      '#value' => t('Check Now'),
       '#type' => 'submit'
     );
   return $form;
@@ -6964,10 +6964,10 @@ function staff_student_action_form() {
   $form = array(
     '#theme' => 'form_panel_table',
     '#form_panel_table_attributes' => array('border' => 0));
-  $form['#title'] = 'Student Action';
+  $form['#title'] = t('Student Action');
 
   $form['comment'] = array(
-    '#title' => 'Comment',
+    '#title' => t('Comment'),
     '#type' => 'textfield',
     '#size' => 25,
     '#form_panel_col' => 1,
@@ -7010,12 +7010,12 @@ function staff_student_action_form() {
   $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
-    '#title' => 'Session',
+    '#title' => t('Session'),
     '#form_panel_col' => 4,
     '#form_panel_row' => 1
     );
   $form['submit'] = array(
-    '#value' => 'Add to Student Record',
+    '#value' => t('Add to Student Record'),
     '#type' => 'submit',
     '#form_panel_col' => 5,
     '#form_panel_row' => 1
@@ -7136,7 +7136,7 @@ function staff_drop_registered_course() {
  * @return array Drupal Form
  */
 function get_student_drop_course_form() {
-  $form['#title'] = 'Drop Course Form';
+  $form['#title'] = t('Drop Course Form');
   $courses = array();
   if(isset($_SESSION['eduerp_drop_course_info'])) {
     $result = get_student_registered_courses($_SESSION['eduerp_drop_course_info']['studentInfo']['uid'], $_SESSION['eduerp_drop_course_info']['session'], $_SESSION['eduerp_drop_course_info']['semester']);
@@ -7150,7 +7150,7 @@ function get_student_drop_course_form() {
  $form['student_grade_nid'] = array(
     '#type' => 'select',
     '#options' => array(''=>'') + $courses,
-    '#title' => 'Registered Courses',
+    '#title' => t('Registered Courses'),
     '#required' =>TRUE
   );
 
@@ -7161,7 +7161,7 @@ function get_student_drop_course_form() {
   );
 
   $form['submit'] = array(
-      '#value' => 'Drop Course',
+      '#value' => t('Drop Course'),
       '#type' => 'submit'
   );
 
@@ -7219,26 +7219,26 @@ function get_student_drop_course_form_submit($form, &$state) {
  * @return array Drupal Form
  */
 function get_student_course_instance_form() {
-  $form['#title'] = 'Get Student Registered Courses By Session and Semester ';
+  $form['#title'] = t('Get Student Registered Courses By Session and Semester ');
 
   $form['mat_no'] = array(
     '#type' => 'textfield',
-    '#title' => 'Matriculation Number',
+    '#title' => t('Matriculation Number'),
     '#required' => TRUE
   );
 
  $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
-    '#title' => 'Session'
+    '#title' => t('Session')
   );
   $form['semester'] = array(
       '#type' => 'select',
       '#options' => array(1 => '1', 2 => '2', 3=>'3'),
-      '#title' => 'Semester'
+      '#title' => t('Semester')
    );
   $form['submit'] = array(
-      '#value' => 'Get Registered Courses',
+      '#value' => t('Get Registered Courses'),
       '#type' => 'submit'
   );
 
@@ -7360,26 +7360,26 @@ function staff_manual_course_reg() {
  * @return array Drupal Form
  */
 function get_student_unreg_course_form() {
-  $form['#title'] = 'Get Student unRegistered Courses By Session and Semester ';
+  $form['#title'] = t('Get Student unRegistered Courses By Session and Semester ');
 
   $form['mat_no'] = array(
     '#type' => 'textfield',
-    '#title' => 'Matriculation Number',
+    '#title' => t('Matriculation Number'),
     '#required' => TRUE
   );
 
  $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
-    '#title' => 'Session'
+    '#title' => t('Session')
   );
   $form['semester'] = array(
       '#type' => 'select',
       '#options' => array(1 => '1', 2 => '2', 3=>'3'),
-      '#title' => 'Semester'
+      '#title' => t('Semester')
    );
   $form['submit'] = array(
-      '#value' => 'Get unRegistered Courses',
+      '#value' => t('Get unRegistered Courses'),
       '#type' => 'submit'
   );
 
@@ -7441,7 +7441,7 @@ function get_student_unreg_course_form_validate($form, &$state) {
  * @return array Drupal Form
  */
 function get_student_reg_course_form() {
-  $form['#title'] = 'Register Course Form';
+  $form['#title'] = t('Register Course Form');
   $courses = array();
   if(isset($_SESSION['eduerp_reg_course_info'])) {
     $result = get_student_unregistered_courses($_SESSION['eduerp_reg_course_info']['studentInfo']['uid'], $_SESSION['eduerp_reg_course_info']['session'], $_SESSION['eduerp_reg_course_info']['semester']);
@@ -7455,7 +7455,7 @@ function get_student_reg_course_form() {
  $form['course_instance_id'] = array(
     '#type' => 'select',
     '#options' => array(''=>'') + $courses,
-    '#title' => 'unRegistered Courses',
+    '#title' => t('unRegistered Courses'),
     '#required' =>TRUE
   );
 
@@ -7466,7 +7466,7 @@ function get_student_reg_course_form() {
   );
 
   $form['submit'] = array(
-      '#value' => 'Register Course',
+      '#value' => t('Register Course'),
       '#type' => 'submit'
   );
 
@@ -7758,16 +7758,16 @@ function staff_change_student_programme() {
  * @return array Drupal Form
  */
 function get_student_info_form() {
-  $form['#title'] = 'Get Student Information ';
+  $form['#title'] = t('Get Student Information ');
 
   $form['mat_no'] = array(
     '#type' => 'textfield',
-    '#title' => 'Matriculation Number',
+    '#title' => t('Matriculation Number'),
     '#required' => TRUE
   );
 
   $form['submit'] = array(
-      '#value' => 'Get Student Info',
+      '#value' => t('Get Student Info'),
       '#type' => 'submit'
   );
 
@@ -7889,12 +7889,12 @@ function staff_student_change_programme_form_validate($form, &$state) {
  * @return array Drupal Form
  */
 function staff_student_change_programme_form() {
-  $form['#title'] = "Change a Student's Programme";
+  $form['#title'] = t("Change a Student's Programme");
 
  $form['programme_nid'] = array(
     '#type' => 'select',
     '#options' => array(''=>'') + get_programmes(0, true),
-    '#title' => 'New Programme for Student',
+    '#title' => t('New Programme for Student'),
     '#ahah' => array('path' => 'staff/ajax/programmelevel', 'event' => 'change', 'method' => 'replace', 'wrapper' => 'programmelevels'),
     '#required' => TRUE
   );
@@ -7902,7 +7902,7 @@ function staff_student_change_programme_form() {
  $form['level_name'] = array(
     '#type' => 'select',
     '#options' => array(''=>''),
-    '#title' => 'New Start Level',
+    '#title' => t('New Start Level'),
     '#attributes' => array(
       'style' => 'width:100px'),
     '#prefix' => "<div id='programmelevels'>",
@@ -7913,7 +7913,7 @@ function staff_student_change_programme_form() {
 
   $form['dont_change_matno'] = array(
     '#type' => 'checkbox',
-    '#title' => "Check this if you Don't want the Student's Admission Number to be Changed",
+    '#title' => t("Check this if you Don't want the Student's Admission Number to be Changed"),
     '#default_value' => FALSE
   );
 
@@ -7924,7 +7924,7 @@ function staff_student_change_programme_form() {
   );
 
   $form['submit'] = array(
-      '#value' => 'Change Student Programme Now',
+      '#value' => t('Change Student Programme Now'),
       '#type' => 'submit'
   );
   return $form;
@@ -8055,19 +8055,19 @@ function staff_check_verify_programme_courses() {
  * @return array Drupal Form
  */
 function get_verify_required_courses_for_programme_form() {
-  $form['#title'] = 'Verify Required Courses for A Programme';
+  $form['#title'] = t('Verify Required Courses for A Programme');
 
   $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
-    '#title' => 'Session',
+    '#title' => t('Session'),
     '#default_value'=>variable_get('eduerp_current_session', ''),
     '#required' => TRUE,
     );
   $form['semester'] = array(
     '#type' => 'select',
     '#options' => array(1=>'1', 2=>'2'),
-    '#title' => 'Semester',
+    '#title' => t('Semester'),
     '#default_value'=>variable_get('eduerp_current_semester', ''),
     '#required' => TRUE,
     );
@@ -8077,7 +8077,7 @@ function get_verify_required_courses_for_programme_form() {
     '#title' => 'trigger display',
     );
   $form['submit'] = array(
-    '#value' => 'Verify Now',
+    '#value' => t('Verify Now'),
     '#type' => 'submit'
   );
 
@@ -8263,24 +8263,24 @@ function staff_check_for_missing_courses(){
  * @return array Drupal Form
  */
 function staff_show_check_missing_courses_form() {
-  $form['#title'] = 'Check For Missing Courses';
+  $form['#title'] = t('Check For Missing Courses');
   $form['session'] = array(
     '#type' => 'select',
     '#options' => get_all_sessions(),
     '#required' => TRUE,
-    '#title' => 'Session');
+    '#title' => t('Session'));
 
   if ($_SESSION['eduerp_check_missing_courses']) $form['session']['#default_value'] = $_SESSION['eduerp_check_missing_courses']['session'];
 
    $form['semester'] = array(
       '#type' => 'select',
       '#options' => array(1 => '1', 2 => '2'),
-      '#title' => 'Semester',
+      '#title' => t('Semester'),
       '#required' => TRUE);
    if ($_SESSION['eduerp_check_missing_courses']) $form['semester']['#default_value'] = $_SESSION['eduerp_check_missing_courses']['semester'];
 
   $form['submit'] = array(
-    '#value' => 'Show Now',
+    '#value' => t('Show Now'),
     '#type' => 'submit'
   );
 
@@ -8671,10 +8671,10 @@ function staff_school_fees_create_modify_fee_item_form() {
     }
   }
 
-  $form['#title'] = 'Create / Modify Fee Item';
+  $form['#title'] = t('Create / Modify Fee Item');
 
   $form['fee_item'] = array(
-    '#title' => 'Fee Item',
+    '#title' => t('Fee Item'),
     '#type' => 'textfield',
     '#size' => 25,
     '#required' => true,
@@ -8684,16 +8684,16 @@ function staff_school_fees_create_modify_fee_item_form() {
   $form['is_scholarship_applicable'] = array(
       '#type' => 'select',
       '#options' => array(1 => 'Yes', 2 => 'No'),
-      '#title' => 'Scholarship Applies To This Item?',
+      '#title' => t('Scholarship Applies To This Item?'),
       '#required' => true,
    );
    if ($feeItem) $form['is_scholarship_applicable']['#value'] = $feeItem->is_scholarship_applicable;
 
   $form['submit'] = array(
-    '#value' => 'Create Fee Item',
+    '#value' => t('Create Fee Item'),
     '#type' => 'submit'
   );
-  if ($feeItem) $form['submit']['#value'] = 'Update Fee Item';
+  if ($feeItem) $form['submit']['#value'] = t('Update Fee Item');
   return $form;
 }
 
@@ -9753,7 +9753,7 @@ function staff_school_fees_modify_fee_settings_form() {
       $feeSettings = db_fetch_object($result);
     }
 
-    $form['#title'] = 'Create / Modify Fee Item';
+    $form['#title'] = t('Create / Modify Fee Item');
     if(trim(strtolower(strtoupper($feeSettings->settings_name))) == 'local country name'){
       $form[$feeSettings->nid] = array(
       '#type' => 'select',
@@ -9786,7 +9786,7 @@ function staff_school_fees_modify_fee_settings_form() {
     }
 
     $form['submit'] = array(
-      '#value' => 'Update Fee Settings Item',
+      '#value' => t('Update Fee Settings Item'),
       '#type' => 'submit'
     );
 
@@ -9898,12 +9898,12 @@ function staff_school_fees_create_modify_fee_setup1_form() {
     $feeSetup['fee_structure_type'] = $_SESSION['eduerp_fee_setup']['fee_structure_type'];
   }
 
-  $form['#title'] = 'Create / Modify Fee Setup';
+  $form['#title'] = t('Create / Modify Fee Setup');
 
   $form['fee_structure_type'] = array(
       '#type' => 'select',
       '#options' => array(''=>'--select one--') + get_fee_structue_types(),
-      '#title' => 'Fee Structure Type',
+      '#title' => t('Fee Structure Type'),
       );
   if ($feeSetup) $form['fee_structure_type']['#value'] = $feeSetup['fee_structure_type'];
   if ($editMode) $form['fee_structure_type']['#options'] = array(''=>'--select one--') + get_fee_structue_types($_SESSION['eduerp_fee_setup']['fee_structure_type'], true);
@@ -9912,18 +9912,18 @@ function staff_school_fees_create_modify_fee_setup1_form() {
     $form['fee_structure_load_from_existing'] = array(
       '#type' => 'select',
       '#options' => array(''=>'--select one--') + load_existing_fee_structure(),
-      '#title' => 'Create From Existing',
+      '#title' => t('Create From Existing'),
       );
   }
     //if ($feeSetup){
     $form['cmdCancel'] = array(
-      '#value' => 'Cancel',
+      '#value' => t('Cancel'),
       '#type' => 'submit'
     );
   //}
 
   $form['submit'] = array(
-    '#value' => 'Continue',
+    '#value' => t('Continue'),
     '#type' => 'submit'
   );
 
@@ -10018,7 +10018,7 @@ function staff_school_fees_create_modify_fee_setup2_form() {
   global $selFeeItems;
   $editMode = ((arg(2) || is_numeric(arg(2))) && is_fee_setup_existing(arg(2), variable_get('eduerp_current_session', ''))) ? true : false;
 
-  $form['#title'] = 'Create / Modify Fee Setup Page 2';
+  $form['#title'] = t('Create / Modify Fee Setup Page 2');
 
   $feeStructure = get_fee_structue_types($_SESSION['eduerp_fee_setup']['fee_structure_type']);
 
@@ -10030,7 +10030,7 @@ function staff_school_fees_create_modify_fee_setup2_form() {
     $form['programme_nid'] = array(
       '#type' => 'select',
       '#options' => array(''=>'---select one---') + get_programmes(0, true),
-      '#title' => 'Program Name',
+      '#title' => t('Program Name'),
 
     );
     if($selFeeItems['programme_nid']) $form['programme_nid']['#value'] = $selFeeItems['programme_nid'];
@@ -10048,7 +10048,7 @@ function staff_school_fees_create_modify_fee_setup2_form() {
   $form['academic_level_name'] = array(
       '#type' => 'select',
       '#options' => array(''=>'---All Levels---') + $academic_levels,
-      '#title' => 'Academic Level Name',
+      '#title' => t('Academic Level Name'),
 
     );
     if($selFeeItems['academic_level_name']) $form['academic_level_name']['#value'] = $selFeeItems['academic_level_name'];
@@ -10073,16 +10073,16 @@ function staff_school_fees_create_modify_fee_setup2_form() {
    );
 
  $form['previous'] = array(
-    '#value' => 'Back',
+    '#value' => t('Back'),
     '#type' => 'submit'
   );
   $form['cmdCancel'] = array(
-    '#value' => 'Cancel',
+    '#value' => t('Cancel'),
     '#type' => 'submit'
   );
 
   $form['submit'] = array(
-    '#value' => 'Continue',
+    '#value' => t('Continue'),
     '#type' => 'submit'
   );
 
@@ -10255,7 +10255,7 @@ function staff_school_fees_create_modify_fee_setup3_form() {
     }
   }
 
-  $form['#title'] = 'Create / Modify Fee Setup Page3';
+  $form['#title'] = t('Create / Modify Fee Setup Page3');
 
   $form['item'] = array(
     '#value' => "Below is the list of ". $frameNum ." Groups of Fees for the selected Fee Structure Type and all available Fee Items. Kindly enter amounts for those associated with the fees you are creating.<br />
@@ -10338,16 +10338,16 @@ function staff_school_fees_create_modify_fee_setup3_form() {
    );
 
   $form['previous'] = array(
-    '#value' => 'Back',
+    '#value' => t('Back'),
     '#type' => 'submit'
   );
   $form['cmdCancel'] = array(
-    '#value' => 'Cancel',
+    '#value' => t('Cancel'),
     '#type' => 'submit'
   );
 
   $form['submit'] = array(
-    '#value' => 'Continue',
+    '#value' => t('Continue'),
     '#type' => 'submit'
   );
 
@@ -10538,7 +10538,7 @@ function staff_school_fees_create_modify_fee_setup3_form_submit($form, &$state) 
  * @return array Drupal Form
  */
 function staff_school_fees_create_modify_fee_setup4_form() {
-  $form['#title'] = 'School Fee Setup Page 4';
+  $form['#title'] = t('School Fee Setup Page 4');
   $form['eduerp_page'] = array(
     '#title' => 'Page',
     '#type' => 'hidden',
@@ -10546,15 +10546,15 @@ function staff_school_fees_create_modify_fee_setup4_form() {
    );
 
   $form['previous'] = array(
-    '#value' => 'Back',
+    '#value' => t('Back'),
     '#type' => 'submit'
   );
   $form['cmdCancel'] = array(
-    '#value' => 'Cancel',
+    '#value' => t('Cancel'),
     '#type' => 'submit'
   );
   $form['submit'] = array(
-    '#value' => 'Submit',
+    '#value' => t('Submit'),
     '#type' => 'submit'
   );
   return $form;
@@ -11086,7 +11086,7 @@ function staff_school_fees_test_fee_setup_form() {
     $form['#title'] = 'Test Fee Setup';
 
     $form['submit'] = array(
-      '#value' => 'Test available School Fee Setup for completeness',
+      '#value' => t('Test available School Fee Setup for completeness'),
       '#type' => 'submit'
     );
 
@@ -11272,16 +11272,16 @@ function prepare_fee_setup_for_edit($setupNID){
  * @return array Drupal Form
  */
 function get_scholarship_payment_student_finder_form(){
-  $form['#title'] = 'Student Finder';
+  $form['#title'] = t('Student Finder');
   $form['mat_number'] = array(
-      '#title' => 'Matriculation / JAMB Number',
+      '#title' => t('Matriculation / JAMB Number'),
       '#type' => 'textfield',
       '#size' => 40,
       '#required' => TRUE
     );
 
   $form['submit'] = array(
-    '#value' => 'Search Now',
+    '#value' => t('Search Now'),
     '#type' => 'submit'
   );
 
@@ -11465,20 +11465,20 @@ function show_student_info($info){
  * @return array Drupal Form
  */
 function staff_show_pay_school_fees_scholarship_form(){
-  $form['#title'] = 'School Fees Scholarship Payment';
+  $form['#title'] = t('School Fees Scholarship Payment');
   $form['scholarship_type'] = array(
     '#type' => 'select',
     '#options' => array(''=>'') + get_scholarship_types(),
-    '#title' => 'Scholarship Type*',
+    '#title' => t('Scholarship Type*'),
   );
   $form['scholarship_sponsor'] = array(
     '#type' => 'select',
     '#options' => array('None'=>'None') + get_scholarship_sponsor_organisations(),
-    '#title' => 'Sponsor Organisation (optional)',
+    '#title' => t('Sponsor Organisation (optional)'),
   );
    $form['remarks'] = array(
     '#type' => 'textarea',
-    '#title' => 'Remarks - Brief details about the Scholarship*',
+    '#title' => t('Remarks - Brief details about the Scholarship*'),
     '#size' => 255,
   );
    $form['lbl01'] = array(
@@ -11486,11 +11486,11 @@ function staff_show_pay_school_fees_scholarship_form(){
     '#value' => "<font color=#FF0000><b>By clicking 'Authorise Scholarship!' you acknowledge that the student whose details appear above is under FULL Scholarship and that such Scholarship covers the School Fee Amount.</b></font>",
   );
   $form['cmdCancel'] = array(
-    '#value' => 'Cancel',
+    '#value' => t('Cancel'),
     '#type' => 'submit'
   );
   $form['submit'] = array(
-    '#value' => 'Authorise Scholarship!',
+    '#value' => t('Authorise Scholarship!'),
     '#type' => 'submit'
   );
 
@@ -11866,16 +11866,16 @@ function get_instalment_authorisations($sessionName) {
  */
 function get_authorise_instalment_student_finder_form(){
 
-  $form['#title'] = 'Student Finder';
+  $form['#title'] = t('Student Finder');
   $form['mat_number'] = array(
-      '#title' => 'Matriculation / JAMB Number',
+      '#title' => t('Matriculation / JAMB Number'),
       '#type' => 'textfield',
       '#size' => 40,
       '#required' => TRUE
     );
 
   $form['submit'] = array(
-    '#value' => 'Search Now',
+    '#value' => t('Search Now'),
     '#type' => 'submit'
   );
 
@@ -11966,10 +11966,10 @@ function staff_display_instalment_authorisations($sessionName) {
  * @return array Drupal Form
  */
 function staff_show_authorise_instalment_form(){
-  $form['#title'] = 'School Fees Instalment Payment';
+  $form['#title'] = t('School Fees Instalment Payment');
    $form['remarks'] = array(
     '#type' => 'textarea',
-    '#title' => 'Remarks - Brief details about the Instalment Payment',
+    '#title' => t('Remarks - Brief details about the Instalment Payment'),
     '#size' => 255,
   );
    $form['lbl01'] = array(
@@ -11989,12 +11989,12 @@ function staff_show_authorise_instalment_form(){
 
   if($found){
     $form['cmdCancel'] = array(
-      '#value' => 'Cancel',
+      '#value' => t('Cancel'),
       '#type' => 'submit'
     );
 
     $form['submit'] = array(
-      '#value' => 'Authorise Instalment Payment!',
+      '#value' => t('Authorise Instalment Payment!'),
       '#type' => 'submit'
     );
   }
@@ -12006,7 +12006,7 @@ function staff_show_authorise_instalment_form(){
     );
 
     $form['cmdCancel'] = array(
-      '#value' => 'Cancel',
+      '#value' => t('Cancel'),
       '#type' => 'submit'
     );
   }
@@ -12809,10 +12809,10 @@ function staff_school_fees_create_modify_scholarship_types_form() {
     }
   }
 
-  $form['#title'] = 'Create / Modify Fee Setup';
+  $form['#title'] = t('Create / Modify Fee Setup');
 
     $form['scholarshipItem'] = array(
-    '#title' => 'Scholarship Type',
+    '#title' => t('Scholarship Type'),
     '#type' => 'textfield',
     '#size' => 50,
     '#required' => true,
@@ -12820,7 +12820,7 @@ function staff_school_fees_create_modify_scholarship_types_form() {
   if ($scholarshipItem) $form['scholarshipItem']['#value'] = $scholarshipItem['scholarshipItem'];
 
   $form['submit'] = array(
-    '#value' => 'Submit',
+    '#value' => t('Submit'),
     '#type' => 'submit'
   );
 
@@ -12996,22 +12996,22 @@ function staff_school_fees_remove_pending_orders(){
  * @return array Drupal Form
  */
 function get_remove_pending_order_form(){
-  $form['#title'] = 'Remove Pending Invoices';
+  $form['#title'] = t('Remove Pending Invoices');
   $form['number_of_days'] = array(
-      '#title' => 'Number of days (if there is a specific Invoice Number entered below, that takes precedence and this value will not be used)',
+      '#title' => t('Number of days (if there is a specific Invoice Number entered below, that takes precedence and this value will not be used)'),
       '#type' => 'textfield',
       '#size' => 40,
       '#default_value' => 30,
     );
 
   $form['order_number'] = array(
-      '#title' => 'Invoice Number (Integer part only)',
+      '#title' => t('Invoice Number (Integer part only)'),
       '#type' => 'textfield',
       '#size' => 40,
     );
 
   $form['submit'] = array(
-    '#value' => 'Remove Now',
+    '#value' => t('Remove Now'),
     '#type' => 'submit'
   );
 
@@ -13112,27 +13112,27 @@ function staff_add_once_off_invoice() {
  * @return array Drupal Form
  */
 function add_once_off_invoice_form() {
-  $form['#title'] = 'Add a Once Off Invoice';
+  $form['#title'] = t('Add a Once Off Invoice');
   $form['admission'] = array(
-      '#title' => 'Admission Number for Student that needs to make the Payment',
+      '#title' => t('Admission Number for Student that needs to make the Payment'),
       '#type' => 'textfield',
       '#size' => 60,
       '#required' => TRUE,
     );
   $form['description'] = array(
-      '#title' => 'Description of Payment (short!)',
+      '#title' => t('Description of Payment (short!)'),
       '#type' => 'textfield',
       '#size' => 60,
       '#required' => TRUE,
     );
   $form['price'] = array(
-      '#title' => 'Amount of Payment (no currency symbol, comma or decimal point)',
+      '#title' => t('Amount of Payment (no currency symbol, comma or decimal point)'),
       '#type' => 'textfield',
       '#size' => 60,
       '#required' => TRUE,
     );
   $form['submit'] = array(
-    '#value' => 'Create a New Once Off Invoice for this Student; Click Once Only!',
+    '#value' => t('Create a New Once Off Invoice for this Student; Click Once Only!'),
     '#type' => 'submit'
   );
   return $form;
@@ -13372,16 +13372,16 @@ function staff_change_uncleared_candidate_programme() {
  * @return array Drupal Form
  */
 function get_candidate_info_form() {
-  $form['#title'] = 'Get Candidate Information ';
+  $form['#title'] = t('Get Candidate Information ');
 
   $form['jamb_no'] = array(
     '#type' => 'textfield',
-    '#title' => 'JAMB Number',
+    '#title' => t('JAMB Number'),
     '#required' => TRUE
   );
 
   $form['submit'] = array(
-      '#value' => 'Get Candidate Info',
+      '#value' => t('Get Candidate Info'),
       '#type' => 'submit'
   );
 
@@ -13477,12 +13477,12 @@ function staff_candidate_change_programme_form_validate($form, &$state) {
  * @return array Drupal Form
  */
 function staff_candidate_change_programme_form() {
-  $form['#title'] = "Change a Candidate's Programme";
+  $form['#title'] = t("Change a Candidate's Programme");
 
  $form['programme_nid'] = array(
     '#type' => 'select',
     '#options' => array(''=>'') + get_programmes(0, true),
-    '#title' => 'New Programme for Candidate',
+    '#title' => t('New Programme for Candidate'),
     '#required' => TRUE
   );
 
@@ -13493,7 +13493,7 @@ function staff_candidate_change_programme_form() {
   );
 
   $form['submit'] = array(
-      '#value' => 'Change Student Programme Now',
+      '#value' => t('Change Student Programme Now'),
       '#type' => 'submit'
   );
   return $form;
@@ -13532,16 +13532,16 @@ function staff_archive_student() {
  * @return array Drupal Form
  */
 function staff_archive_student_form() {
-  $form['#title'] = 'Archive a Student';
+  $form['#title'] = t('Archive a Student');
 
   $form['jamb_no'] = array(
     '#type' => 'textfield',
-    '#title' => 'JAMB Number',
+    '#title' => t('JAMB Number'),
     '#required' => TRUE
   );
 
   $form['submit'] = array(
-    '#value' => 'Archive this Student',
+    '#value' => t('Archive this Student'),
     '#type' => 'submit'
   );
 

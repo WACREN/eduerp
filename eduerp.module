@@ -94,7 +94,7 @@
 function eduerp_menu() {
 
   $items['admin/settings/eduerp'] = array (
-    'title' => 'EduERP Configuration',
+    'title' => t('EduERP Configuration'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array (
       'eduerp_admin_settings'
@@ -127,7 +127,7 @@ function eduerp_simpletest() {
 function eduerp_admin_settings() {
   $form['RegisterAllCoursesatStartofSession'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Register All Courses at Start of Session',
+    '#title' => t('Register All Courses at Start of Session'),
     '#default_value' => variable_get('RegisterAllCoursesatStartofSession', 0),
     '#description' => 'This switch determines whether students register courses for both semesters at the start of the first semester',
     '#tree' => TRUE
@@ -135,7 +135,7 @@ function eduerp_admin_settings() {
 
   $form['CombineCreditLoadTestsforBothSemesters'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Combine Credit Load Tests for Both Semesters',
+    '#title' => t('Combine Credit Load Tests for Both Semesters'),
     '#default_value' => variable_get('CombineCreditLoadTestsforBothSemesters', 0),
     '#description' => "This switch determines whether student's Credit Loads are tested against total limits for both semesters rather than individually checked against limits for each semester",
     '#tree' => TRUE
@@ -143,7 +143,7 @@ function eduerp_admin_settings() {
 
   $form['RegistrarApprovesGrades'] = array(
     '#type' => 'checkbox',
-    '#title' => 'RegistrarApprovesGrades',
+    '#title' => t('RegistrarApprovesGrades'),
     '#default_value' => variable_get('RegistrarApprovesGrades', 0),
     '#description' => 'This switch determines whether student grades are approved by the Registrar (if not they go straight to the Vice Chancellor)',
     '#tree' => TRUE
@@ -151,19 +151,19 @@ function eduerp_admin_settings() {
 
   $form['eduerp_institution_current'] = array(
     '#type' => 'textfield',
-    '#title' => 'University Name',
+    '#title' => t('University Name'),
     '#default_value' => variable_get('eduerp_institution_current', ''),
   );
 
   $form['eduerp_student_guidelines_url'] = array(
     '#type' => 'textfield',
-    '#title' => 'Student Guidelines URL',
+    '#title' => t('Student Guidelines URL'),
     '#default_value' => variable_get('eduerp_student_guidelines_url', ''),
   );
 
   $form['eduerp_zimbra_webmail_url'] = array(
     '#type' => 'textfield',
-    '#title' => 'Student Webmail URL',
+    '#title' => t('Student Webmail URL'),
     '#default_value' => variable_get('eduerp_zimbra_webmail_url', ''),
   );
 

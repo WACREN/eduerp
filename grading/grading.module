@@ -7,7 +7,7 @@ function grading_menu() {
   $items = array();
 
   $items['grading/viewgrades'] = array(
-    'title' => 'View Course Grades',
+    'title' => t('View Course Grades'),
     'page callback' => 'drupal_goto',
     'page arguments' => array('course'),
     'access arguments' => array('view grading'),
@@ -16,7 +16,7 @@ function grading_menu() {
   );
 
   $items['grading/viewgpa'] = array(
-    'title' => 'View Programme GPAs',
+    'title' => t('View Programme GPAs'),
     'page callback' => 'drupal_goto',
     'page arguments' => array('gpa'),
     'access arguments' => array('view grading'),
@@ -25,7 +25,7 @@ function grading_menu() {
   );
 
   $items['grading/viewmygrades'] = array(
-    'title' => 'View My Grades',
+    'title' => t('View My Grades'),
     'page callback' => 'drupal_goto',
     'page arguments' => array('student'),
     'access arguments' => array('view my grades'),
@@ -34,7 +34,7 @@ function grading_menu() {
   );
 
   $items['grading/stats'] = array(
-    'title'=>'Grading Departmental Stats',
+    'title'=>t('Grading Departmental Stats'),
     'page callback' => 'drupal_get_form',
     'page arguments'=> array('grading_stats_department_form'),
     'access arguments' => array('view grading'),
@@ -49,7 +49,7 @@ function grading_menu() {
   );
 
   $items['grading/statsuni'] = array(
-    'title'=>'Grading University Stats',
+    'title'=>t('Grading University Stats'),
     'page callback' => 'drupal_get_form',
     'page arguments'=> array('grading_stats_uni_form'),
     'access arguments' => array('view grading'),
@@ -78,7 +78,7 @@ function grading_menu() {
   );
 
   $items['grading/studentdetails'] = array(
-    'title'=>'Grading Student Details',
+    'title'=>t('Grading Student Details'),
     'page callback' => 'drupal_get_form',
     'page arguments'=> array('grading_student_details_form'),
     'access arguments' => array('view grading'),
@@ -597,7 +597,7 @@ function grading_stats_department_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $departmentdefault,
     '#options' => _grading_department_list(),
-    '#title' => 'Department',
+    '#title' => t('Department'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstats',
@@ -612,7 +612,7 @@ function grading_stats_department_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $sessiondefault,
     '#options' => _grading_session_list(),
-    '#title' => 'Session',
+    '#title' => t('Session'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstats',
@@ -627,7 +627,7 @@ function grading_stats_department_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $semesterdefault,
     '#options' => _grading_semester_list(),
-    '#title' => 'Semester',
+    '#title' => t('Semester'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstats',
@@ -642,7 +642,7 @@ function grading_stats_department_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $leveldefault,
     '#options' => _grading_level_list(),
-    '#title' => 'Level',
+    '#title' => t('Level'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstats',
@@ -1161,7 +1161,7 @@ function approve_grades_registrar_form($form_state) {
 
   $form['comment'] = array(
     '#type' => 'textarea',
-    '#title' => 'Enter a comment on the grades for the Vice Chancellor',
+    '#title' => t('Enter a comment on the grades for the Vice Chancellor'),
     '#cols' => 80,
     '#rows' => 5,
     '#required' => TRUE
@@ -1345,7 +1345,7 @@ function approve_grades_vc_form($form_state) {
 
   $form['comment'] = array(
     '#type' => 'textarea',
-    '#title' => 'Enter a comment on the grades for the Record',
+    '#title' => t('Enter a comment on the grades for the Record'),
     '#cols' => 80,
     '#rows' => 5,
     '#required' => TRUE
@@ -1675,7 +1675,7 @@ function grading_stats_uni_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $sessiondefault,
     '#options' => _grading_session_list(),
-    '#title' => 'Session',
+    '#title' => t('Session'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1690,7 +1690,7 @@ function grading_stats_uni_form(&$obj) {
     '#type' => 'select',
     '#default_value' => $semesterdefault,
     '#options' => _grading_semester_list(),
-    '#title' => 'Semester',
+    '#title' => t('Semester'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1704,7 +1704,7 @@ function grading_stats_uni_form(&$obj) {
   $form['level'] = array(
     '#type' => 'select',
     '#options' => _grading_level_list_any(),
-    '#title' => 'Level',
+    '#title' => t('Level'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1717,7 +1717,7 @@ function grading_stats_uni_form(&$obj) {
   $form['college'] = array(
     '#type' => 'select',
     '#options' => _grading_college_list_any(),
-    '#title' => 'Faculty',
+    '#title' => t('Faculty'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1730,7 +1730,7 @@ function grading_stats_uni_form(&$obj) {
   $form['department'] = array(
     '#type' => 'select',
     '#options' => _grading_department_list_any(),
-    '#title' => 'Department',
+    '#title' => t('Department'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1743,7 +1743,7 @@ function grading_stats_uni_form(&$obj) {
   $form['programme'] = array(
     '#type' => 'select',
     '#options' => _grading_programme_list_any(),
-    '#title' => 'Programme',
+    '#title' => t('Programme'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstatsuni',
@@ -1960,7 +1960,7 @@ function grading_student_details_form(&$obj) {
   $form['studentname'] = array(
     '#type' => 'select',
     '#options' => _grading_student_list(),
-    '#title' => 'Student Name',
+    '#title' => t('Student Name'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstudentdetails',
@@ -1973,7 +1973,7 @@ function grading_student_details_form(&$obj) {
   $form['studentmat'] = array(
     '#type' => 'select',
     '#options' => _grading_mat_list(),
-    '#title' => 'Student Matriculation Number',
+    '#title' => t('Student Matriculation Number'),
     '#ahah' =>array(
       'event'   => 'change',
       'path'    => 'grading/ahahstudentdetails',

@@ -2107,12 +2107,18 @@ function student_hostel_reservation(){
  * @global array $_simplesamlphp_auth_saml_attributes
  */
 function student_user($op, &$edit, &$account, $category = NULL) {
+global $user;//DEBUG
   global $_simplesamlphp_auth_as;
   global $_simplesamlphp_auth_saml_attributes;
 
   if ($op == 'insert' && $category = 'account') {
     if ($_simplesamlphp_auth_as->isAuthenticated()) {
 error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
+error_log(print_r($account, true));
+if (empty($account)) error_log('account empty');
+error_log(print_r($user, true));
+if (empty($user)) error_log('user empty');
+error_log('user above');
 
       // Fake for the moment...
       if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {

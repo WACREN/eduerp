@@ -555,6 +555,7 @@ function staff_assign_role() {
       drupal_goto('user');
   }
 
+  if (empty($_SESSION['eduerpassignrole'])) $_SESSION['eduerpassignrole'] = new stdClass();
   $_SESSION['eduerpassignrole']->uid = arg(2);
 
   $user_profile = new UserProfile($_SESSION['eduerpassignrole']->uid);

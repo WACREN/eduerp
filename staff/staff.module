@@ -1070,9 +1070,9 @@ function staff_course_list() {
     while ($f = db_fetch_object($result)) {
 ?>
       <tr>
-      <td><? echo $f->code; ?></td>
-      <td><a href="view/<?php echo $f->uid?>"><? echo $f->staff_name; ?></a></td>
-      <td><? echo $f->course_title; ?></td>
+      <td><?php echo $f->code; ?></td>
+      <td><a href="view/<?php echo $f->uid?>"><?php echo $f->staff_name; ?></a></td>
+      <td><?php echo $f->course_title; ?></td>
       </tr>
 <?php
     }
@@ -1091,8 +1091,8 @@ function staff_course_list() {
   while ($f = db_fetch_object($result)) {
 ?>
     <tr>
-    <td><? echo $f->code; ?></td>
-    <td><? echo $f->course_title; ?></td>
+    <td><?php echo $f->code; ?></td>
+    <td><?php echo $f->course_title; ?></td>
     </tr>
 <?php
     }
@@ -1128,9 +1128,9 @@ function staff_department_list() {
   while ($f = db_fetch_object($r)) {
 ?>
       <tr>
-      <td><? echo $f->department_name; ?></td>
-      <td><a href="view/<?php echo $f->hod_uid?>"><? echo $f->hod_name; ?></a></td>
-      <td><a href="viewlecturer/<? echo $f->department_id; ?>">View Courses/Lecturers</a></td>
+      <td><?php echo $f->department_name; ?></td>
+      <td><a href="view/<?php echo $f->hod_uid?>"><?php echo $f->hod_name; ?></a></td>
+      <td><a href="viewlecturer/<?php echo $f->department_id; ?>">View Courses/Lecturers</a></td>
       </tr>
 <?php
   }
@@ -1190,8 +1190,8 @@ function staff_search_list() {
 ?>
       <tr>
       <td><?php echo $f->name ?></td>
-      <td><? echo $f->role_name; ?></td>
-      <td><a href="view/<? echo $f->uid; ?>">View</a></td>
+      <td><?php echo $f->role_name; ?></td>
+      <td><a href="view/<?php echo $f->uid; ?>">View</a></td>
       <td><a href="<?php echo url('staff/assignrole/'. $f->uid)?>">Assign Roles</a></td>
       </tr>
 <?php

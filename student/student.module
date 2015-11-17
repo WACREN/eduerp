@@ -2113,6 +2113,18 @@ function student_user($op, &$edit, &$account, $category = NULL) {
   if ($op == 'insert' && $category = 'account') {
     if ($_simplesamlphp_auth_as->isAuthenticated()) {
 error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
+
+      // Fake for the moment...
+      if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
+        $_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0] = 'faculty';
+      }
+      if (!isset($_simplesamlphp_auth_saml_attributes['uid']) || !isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
+        $_simplesamlphp_auth_saml_attributes['uid'][0] = $_simplesamlphp_auth_saml_attributes['givenName'][0];
+      }
+      if (!isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) || !isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0])) {
+        $_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0] = 'SN';
+      }
+
       if (isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0]) &&
           (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) ||
            isset($_simplesamlphp_auth_saml_attributes['User Name']) && isset($_simplesamlphp_auth_saml_attributes['User Name'][0])) &&

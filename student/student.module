@@ -2117,18 +2117,18 @@ error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
 error_log('user: ' . print_r($user, true));
 
       // Fake for the moment...
-      if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
-        $_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0] = 'faculty';
-      }
-      if (!isset($_simplesamlphp_auth_saml_attributes['uid']) || !isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
-        $_simplesamlphp_auth_saml_attributes['uid'][0] = $_simplesamlphp_auth_saml_attributes['givenName'][0];
-      }
+      //if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
+      //  $_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0] = 'faculty';
+      //}
+      //if (!isset($_simplesamlphp_auth_saml_attributes['uid']) || !isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
+      //  $_simplesamlphp_auth_saml_attributes['uid'][0] = $_simplesamlphp_auth_saml_attributes['givenName'][0];
+      //}
       if (!isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) || !isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0])) {
         $_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0] = 'SN';
       }
-      if (!isset($_simplesamlphp_auth_saml_attributes['mail']) || !isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
-        $_simplesamlphp_auth_saml_attributes['mail'][0] = $_simplesamlphp_auth_saml_attributes['eduPersonPrincipalName'][0];
-      }
+      //if (!isset($_simplesamlphp_auth_saml_attributes['mail']) || !isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
+      //  $_simplesamlphp_auth_saml_attributes['mail'][0] = $_simplesamlphp_auth_saml_attributes['eduPersonPrincipalName'][0];
+      //}
 
       if (isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0]) &&
           (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) ||

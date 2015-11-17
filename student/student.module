@@ -2114,12 +2114,7 @@ function student_user($op, &$edit, &$account, $category = NULL) {
   if ($op == 'insert' && $category = 'account') {
     if ($_simplesamlphp_auth_as->isAuthenticated()) {
 error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
-error_log(print_r($account, true));
-error_log(print_r($user, true));
-if (!isset($user)) error_log('user !isset');
-if (is_null($user)) error_log('user is_null');
-if (empty($user)) error_log('user empty');
-error_log('user above');
+error_log('user: ' . print_r($user, true));
 
       // Fake for the moment...
       if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
@@ -2623,7 +2618,8 @@ $ISO3166toEduERPCountries = array(
           error_log('simplesamlphp_auth uid: ' . $username . ' is neither student, staff or faculty');
         }
 
-        if ($empty_user) unset($user);
+        //if ($empty_user) unset($user);
+        if ($empty_user) $user = 0; // It does seem to have been the digit 0
       }
       else {
         error_log('simplesamlphp_auth is missing key attributes');

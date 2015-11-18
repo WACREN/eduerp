@@ -2116,7 +2116,10 @@ function student_user($op, &$edit, &$account, $category = NULL) {
       $xxx = $_simplesamlphp_auth_saml_attributes;
       unset($xxx['jpegPhoto']);
       unset($xxx['jpegSignature']);
-      error_log(print_r($xxx, true));
+      //error_log(print_r($xxx, true));
+      foreach ($xxx as $index => $x) {
+        error_log("$index: $x");
+      }
 
       // Fake for the moment...
       //if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
@@ -2501,17 +2504,18 @@ $ISO3166toEduERPCountries = array(
             $file->filename  = 'Photo_' . $account->uid . '.jpg';
             $file->filepath  = 'sites/default/files/profile/photo/' . $file->filename;
             $file->filemime  = 'image/jpeg';
-            $file->filesize  = strlen($_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+            $decoded = base64_decode($_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+            $file->filesize  = strlen($decoded);
             $file->status    = 1;
             $file->timestamp = time();
             drupal_write_record('files', $file);
             error_log('Photo fid: ' . $file->fid);
 
-            student_write_file($file->filepath, $_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+            student_write_file($file->filepath, $decoded);
 
-            $node->field_profile_photograph['fid']  = $file->fid;
-            $node->field_profile_photograph['list'] = 1;
-            $node->field_profile_photograph['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' photo');
+            $node->field_profile_photograph[0]['fid']  = $file->fid;
+            $node->field_profile_photograph[0]['list'] = 1;
+            $node->field_profile_photograph[0]['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' photo');
           }
 
           if (isset($_simplesamlphp_auth_saml_attributes['jpegSignature']) && !empty($_simplesamlphp_auth_saml_attributes['jpegSignature'][0])) {
@@ -2520,17 +2524,18 @@ $ISO3166toEduERPCountries = array(
             $file->filename  = 'Signature_' . $account->uid . '.jpg';
             $file->filepath  = 'sites/default/files/profile/signature/' . $file->filename;
             $file->filemime  = 'image/jpeg';
-            $file->filesize  = strlen($_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+            $decoded = base64_decode($_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+            $file->filesize  = strlen($decoded);
             $file->status    = 1;
             $file->timestamp = time();
             drupal_write_record('files', $file);
             error_log('Signature fid: ' . $file->fid);
 
-            student_write_file($file->filepath, $_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+            student_write_file($file->filepath, $decoded);
 
-            $node->field_profile_signature['fid']  = $file->fid;
-            $node->field_profile_signature['list'] = 1;
-            $node->field_profile_signature['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' signature');
+            $node->field_profile_signature[0]['fid']  = $file->fid;
+            $node->field_profile_signature[0]['list'] = 1;
+            $node->field_profile_signature[0]['data'] = array('alt' => $_simplesamlphp_auth_saml_attributes['sn'][0], 'title' => $_simplesamlphp_auth_saml_attributes['sn'][0] . ' signature');
           }
 
           node_save($node);
@@ -2588,7 +2593,6 @@ $ISO3166toEduERPCountries = array(
           $node->field_profile_olevel_qual_2[0]['value']     = 'OND';
           $node->field_profile_reg_session[0]['value']       = '';
           $node->field_profile_reg_semester[0]['value']      = '';
-          $node->field_profile_reg_session[0]['value']       = '';
           $node->field_profile_score_details[0]['value']     = '-';
           $node->field_profile_exam_number_1[0]['value']     = '-';
           $node->field_profile_state_sponsor[0]['value']     = 'Foreign';

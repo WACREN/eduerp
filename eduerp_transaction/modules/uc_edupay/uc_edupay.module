@@ -731,14 +731,19 @@ function uc_edupay_fees_order_get_item($field) {
  */
 function uc_edupay_token_values($type, $object = NULL) {
   $values = array();
+
   switch ($type) {
     case 'order':
       $order = $object;
       $student_profile = content_profile_load('student_profile', $order->uid);
+
+      $programme = array();
+      $fullnames = array();
+      $timeout = array();
       foreach ($order->data as $key => $value) {
-$xxx = $order->data;
-error_log("order->data");
-error_log(print_r($xxx, true));
+        if (!is_array($value)) continue;
+error_log("order->data $key");
+
         if($value['type'] == EDUERP_FEES_NORMAL) {
           $programme[] = $value['programme'];
         }
@@ -935,10 +940,13 @@ function uc_edupay_preprocess_uc_order(&$vars) {
   $student_uid = $vars['order_uid'];
   $student_profile = content_profile_load('student_profile', $student_uid);
 
+  $programme = array();
+  $fullnames = array();
+  $timeout = array();
   foreach ($vars['order']->data as $key => $value) {
-$xxx = $vars['order']->data;
-error_log("vars['order']->data");
-error_log(print_r($xxx, true));
+        if (!is_array($value)) continue;
+error_log("vars['order']->data $key");
+
     if($value['type'] == EDUERP_FEES_NORMAL) {
       $programme[] = $value['programme'];
     }

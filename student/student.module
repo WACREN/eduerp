@@ -2118,7 +2118,8 @@ function student_user($op, &$edit, &$account, $category = NULL) {
       unset($xxx['jpegSignature']);
       //error_log(print_r($xxx, true));
       foreach ($xxx as $index => $x) {
-        error_log("$index: $x");
+        $y = $x[0];
+        error_log("$index: $y");
       }
 
       // Fake for the moment...
@@ -2509,7 +2510,6 @@ $ISO3166toEduERPCountries = array(
             $file->status    = 1;
             $file->timestamp = time();
             drupal_write_record('files', $file);
-            error_log('Photo fid: ' . $file->fid);
 
             student_write_file($file->filepath, $decoded);
 
@@ -2529,7 +2529,6 @@ $ISO3166toEduERPCountries = array(
             $file->status    = 1;
             $file->timestamp = time();
             drupal_write_record('files', $file);
-            error_log('Signature fid: ' . $file->fid);
 
             student_write_file($file->filepath, $decoded);
 
@@ -2643,14 +2642,12 @@ $ISO3166toEduERPCountries = array(
  * @param string $contents
   */
 function student_write_file($path, $contents) {
-  error_log("Path being written: $path");
   $parts = explode('/', $path);
   $file = array_pop($parts);
   $dir = '';
   foreach ($parts as $part) {
     $dir .= $part;
     if (!is_dir($dir)) {
-      error_log("mkdir: $dir");
       mkdir($dir);
     }
     $dir .= '/';

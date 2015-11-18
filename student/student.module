@@ -2129,6 +2129,7 @@ error_log('user: ' . print_r($user, true));
       //if (!isset($_simplesamlphp_auth_saml_attributes['mail']) || !isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
       //  $_simplesamlphp_auth_saml_attributes['mail'][0] = $_simplesamlphp_auth_saml_attributes['eduPersonPrincipalName'][0];
       //}
+      $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0] = 'B.Sc. Ingénieur Conception';
 
       if (isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0]) &&
           (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) ||

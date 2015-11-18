@@ -2113,8 +2113,10 @@ function student_user($op, &$edit, &$account, $category = NULL) {
 
   if ($op == 'insert' && $category = 'account') {
     if ($_simplesamlphp_auth_as->isAuthenticated()) {
-error_log(print_r($_simplesamlphp_auth_saml_attributes, true));
-error_log('user: ' . print_r($user, true));
+      $xxx = $_simplesamlphp_auth_saml_attributes;
+      unset($xxx['jpegPhoto']);
+      unset($xxx['jpegSignature']);
+      error_log(print_r($xxx, true));
 
       // Fake for the moment...
       //if (!isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) || !isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0])) {
@@ -2505,7 +2507,7 @@ $ISO3166toEduERPCountries = array(
             drupal_write_record('files', $file);
             error_log('Photo fid: ' . $file->fid);
 
-            student_write_file(file_directory_path() . '/' . $file->filepath, $_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
+            student_write_file($file->filepath, $_simplesamlphp_auth_saml_attributes['jpegPhoto'][0]);
 
             $node->field_profile_photograph['fid']  = $file->fid;
             $node->field_profile_photograph['list'] = 1;
@@ -2524,7 +2526,7 @@ $ISO3166toEduERPCountries = array(
             drupal_write_record('files', $file);
             error_log('Signature fid: ' . $file->fid);
 
-            student_write_file(file_directory_path() . '/' . $file->filepath, $_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
+            student_write_file($file->filepath, $_simplesamlphp_auth_saml_attributes['jpegSignature'][0]);
 
             $node->field_profile_signature['fid']  = $file->fid;
             $node->field_profile_signature['list'] = 1;
@@ -2642,10 +2644,15 @@ function student_write_file($path, $contents) {
   $file = array_pop($parts);
   $dir = '';
   foreach ($parts as $part) {
-    if (!is_dir($dir .= "/$part")) mkdir($dir);
+    $dir .= $part;
+    if (!is_dir($dir)) {
+      error_log("mkdir: $dir");
+      mkdir($dir);
+    }
+    $dir .= '/';
   }
-  file_put_contents("$dir/$file", $contents);
-  @chmod("$dir/$file", 0664);
+  file_put_contents($path, $contents);
+  @chmod($path, 0664);
 }
 
 

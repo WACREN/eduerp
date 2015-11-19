@@ -753,7 +753,6 @@ function uc_edupay_token_values($type, $object = NULL) {
       $lateRegInfo = get_late_registration_info();
       $late_charges = $lateRegInfo['late_reg_amount'];
 
-error_log("$programme[0] $fullnames[0] $timeout[0]");
       $values['programme'] = $programme[0];
       $values['fullnames'] = $fullnames[0];
       $values['timeout-raw'] = $timeout[0];
@@ -959,7 +958,6 @@ function uc_edupay_preprocess_uc_order(&$vars) {
   // fees related variables
   // some values can be gotten through token_get_values($type, $object, FALSE, $options);
   $vars['matric_number'] = $student_profile->field_profile_matno[0]['value'];
-error_log("$programme[0] $fullnames[0] $timeout[0]");
   $vars['programme'] = $programme[0];
   $vars['fullnames'] = $fullnames[0];
   $timeout = $timeout[0];

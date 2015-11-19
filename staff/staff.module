@@ -4884,18 +4884,18 @@ function staff_specify_course_for_programme() {
   function delete_assignment(id) {
 
     if (confirm('Are you sure you want to delete this course assignment?')) {
-      $.get('/staff/ajax/deleteassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
+      $.get('$prefix/staff/ajax/deleteassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
     }
   }
 
 
   function make_available(id) {
     if (confirm('Are you sure you want to make the Course available for New Registrations?')) {
-      $.get('/staff/ajax/makeavailable/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
+      $.get('$prefix/staff/ajax/makeavailable/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
     }
   }
   function edit_assignment(id) {
-      $.get('/staff/ajax/modifyassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg/'+id; });
+      $.get('$prefix/staff/ajax/modifyassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg/'+id; });
   }
 EOD;
 
@@ -5171,7 +5171,7 @@ function display_course_result(&$result, $formissing = false) {
    $delete_assignment_js =<<< EOD
 function fix_course(id) {
   if (confirm('Proceed to fixing problem?')) {
-    $.get('/staff/ajax/fix_course/$programme_nid/'+id, function(data) { location.href='$prefix/staff/createeditcourse/$department_nid'; });
+    $.get('$prefix/staff/ajax/fix_course/$programme_nid/'+id, function(data) { location.href='$prefix/staff/createeditcourse/$department_nid'; });
   }
 }
 EOD;

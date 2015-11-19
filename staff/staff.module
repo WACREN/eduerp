@@ -4878,22 +4878,24 @@ function staff_specify_course_for_programme() {
 
   $arg = arg(2);
 
+  $prefix = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '/staff')); // EduERP might be in a subdirectory of the server root
+
   $delete_assignment_js =<<< EOD
   function delete_assignment(id) {
 
     if (confirm('Are you sure you want to delete this course assignment?')) {
-      $.get('/staff/ajax/deleteassignprog/'+id, function(data) { location.href='/staff/specifycourse/$arg'; });
+      $.get('/staff/ajax/deleteassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
     }
   }
 
 
   function make_available(id) {
     if (confirm('Are you sure you want to make the Course available for New Registrations?')) {
-      $.get('/staff/ajax/makeavailable/'+id, function(data) { location.href='/staff/specifycourse/$arg'; });
+      $.get('/staff/ajax/makeavailable/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg'; });
     }
   }
   function edit_assignment(id) {
-      $.get('/staff/ajax/modifyassignprog/'+id, function(data) { location.href='/staff/specifycourse/$arg/'+id; });
+      $.get('/staff/ajax/modifyassignprog/'+id, function(data) { location.href='$prefix/staff/specifycourse/$arg/'+id; });
   }
 EOD;
 
@@ -5164,10 +5166,12 @@ function display_course_result(&$result, $formissing = false) {
   $department_nid = $programmeInfo->department_nid;
   $programme_nid = $programmeInfo->programme_nid;
 
+  $prefix = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '/staff')); // EduERP might be in a subdirectory of the server root
+
    $delete_assignment_js =<<< EOD
 function fix_course(id) {
   if (confirm('Proceed to fixing problem?')) {
-    $.get('/staff/ajax/fix_course/$programme_nid/'+id, function(data) { location.href='/staff/createeditcourse/$department_nid'; });
+    $.get('/staff/ajax/fix_course/$programme_nid/'+id, function(data) { location.href='$prefix/staff/createeditcourse/$department_nid'; });
   }
 }
 EOD;

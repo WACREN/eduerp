@@ -2129,13 +2129,26 @@ function student_user($op, &$edit, &$account, $category = NULL) {
       //if (!isset($_simplesamlphp_auth_saml_attributes['uid']) || !isset($_simplesamlphp_auth_saml_attributes['uid'][0])) {
       //  $_simplesamlphp_auth_saml_attributes['uid'][0] = $_simplesamlphp_auth_saml_attributes['givenName'][0];
       //}
-      if (!isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) || !isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0])) {
-        $_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0] = 'SN';
-      }
+      //if (!isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship']) || !isset($_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0])) {
+      //  $_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0] = 'SN';
+      //}
       //if (!isset($_simplesamlphp_auth_saml_attributes['mail']) || !isset($_simplesamlphp_auth_saml_attributes['mail'][0])) {
       //  $_simplesamlphp_auth_saml_attributes['mail'][0] = $_simplesamlphp_auth_saml_attributes['eduPersonPrincipalName'][0];
       //}
-      $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0] = 'B.Sc. Ingénieur Conception';
+      //$_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0] = 'B.Sc. Ingénieur Conception';
+
+      if (isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.7135.1.2.1.32']) && isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.7135.1.2.1.32'][0])) {
+        $_simplesamlphp_auth_saml_attributes['supannEtuSecteurDisciplinaire'][0] = $_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.7135.1.2.1.32'][0];
+      }
+      if (isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.2']) && isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.2'][0])) {
+        $_simplesamlphp_auth_saml_attributes['schacGender'][0] = $_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.2'][0];
+      }
+      if (isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.3']) && isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.3'][0])) {
+        $_simplesamlphp_auth_saml_attributes['schacDateOfBirth'][0] = $_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.25178.1.2.3'][0];
+      }
+      if (isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.1466.115.121.1.15']) && isset($_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.1466.115.121.1.15'][0])) {
+        $_simplesamlphp_auth_saml_attributes['schacCountryOfCitizenship'][0] = $_simplesamlphp_auth_saml_attributes['urn:oid:1.3.6.1.4.1.1466.115.121.1.15'][0];
+      }
 
       if (isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation']) && isset($_simplesamlphp_auth_saml_attributes['eduPersonPrimaryAffiliation'][0]) &&
           (isset($_simplesamlphp_auth_saml_attributes['uid']) && isset($_simplesamlphp_auth_saml_attributes['uid'][0]) ||

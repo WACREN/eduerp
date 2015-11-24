@@ -9947,11 +9947,13 @@ function staff_school_fees_create_modify_fee_setup1_form_validate($form, &$state
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
       drupal_goto('staff/createmodifyfeestup');
       break;
+    case 'continuer':
     case 'continue':
       if(empty($values['fee_structure_type'])){
         form_set_error('fee_structure_type', Error_Types(114));
@@ -9987,6 +9989,7 @@ function staff_school_fees_create_modify_fee_setup1_form_submit($form, &$state){
     unset($_SESSION['eduerp_fee_setup']['academic_level_name']);
   }
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'continuer':
     case'continue':
       if(! $editMode){
         $_SESSION['eduerp_fee_setup']['fee_structure_type'] = $values['fee_structure_type'];
@@ -10107,6 +10110,7 @@ function staff_school_fees_create_modify_fee_setup2_form_validate($form, &$state
 
   switch(trim(strtolower(strtoupper($values['op'])))){
 
+    case 'continuer':
     case 'continue':
       $feeStructure = get_fee_structue_types($_SESSION['eduerp_fee_setup']['fee_structure_type']);
 
@@ -10118,6 +10122,7 @@ function staff_school_fees_create_modify_fee_setup2_form_validate($form, &$state
         }
       }
       break;
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
@@ -10149,6 +10154,7 @@ function staff_school_fees_create_modify_fee_setup2_form_submit($form, &$state) 
          drupal_goto('staff/createmodifyfeestup');
       break;
 
+    case 'continuer':
     case 'continue':
        $_SESSION['eduerp_page'] = 3; unset($_POST['eduerp_page']);
        if(! $editMode){
@@ -10166,6 +10172,7 @@ function staff_school_fees_create_modify_fee_setup2_form_submit($form, &$state) 
          drupal_goto('staff/createmodifyfeestup');
       break;
 
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
@@ -10385,12 +10392,14 @@ function staff_school_fees_create_modify_fee_setup3_form_validate($form, &$state
   $totalAmount = 0;
 
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
       drupal_goto('staff/createmodifyfeestup');
       break;
 
+    case 'continuer':
     case 'continue':
     $frameNum="Four (4)";
     if(! empty($_SESSION['eduerp_fee_setup']['academic_level_name'])  && $_SESSION['eduerp_fee_setup']['academic_level_name'] != 'N/A'){
@@ -10519,6 +10528,7 @@ function staff_school_fees_create_modify_fee_setup3_form_submit($form, &$state) 
          drupal_goto('staff/createmodifyfeestup');
     break;
 
+    case 'continuer':
     case 'continue':
        $_SESSION['eduerp_page'] = 4; unset($_POST['eduerp_page']);
        if((arg(2) || is_numeric(arg(2))))
@@ -10526,6 +10536,7 @@ function staff_school_fees_create_modify_fee_setup3_form_submit($form, &$state) 
        else
          drupal_goto('staff/createmodifyfeestup');
     break;
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
@@ -10582,12 +10593,14 @@ function staff_school_fees_create_modify_fee_setup4_form_validate($form, &$state
 
   $editMode = ((arg(2) || is_numeric(arg(2))) && is_fee_setup_existing(arg(2), variable_get('eduerp_current_session', ''), $academicLevel)) ? true : false;
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
       drupal_goto('staff/createmodifyfeestup');
       break;
 
+    case 'soumettre':
     case 'submit':
       if(is_fee_setup_combination_existing($programNID, variable_get('eduerp_current_session', ''), $academicLevel) && ! $editMode){
         form_set_error('submit', Error_Types(167));
@@ -10623,6 +10636,7 @@ function staff_school_fees_create_modify_fee_setup4_form_submit($form, &$state) 
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))) {
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_fee_setup']); $_SESSION['eduerp_fee_setup'] = null;
       unset($_SESSION['eduerp_page']); $_SESSION['eduerp_page']=null;
@@ -10637,6 +10651,7 @@ function staff_school_fees_create_modify_fee_setup4_form_submit($form, &$state) 
         drupal_goto('staff/createmodifyfeestup');
     break;
 
+    case 'soumettre':
     case 'submit':
       //we need to check if attribute exists if not create it.
       if (is_uc_attribute_existing("fee_structure")) {
@@ -11527,6 +11542,7 @@ function staff_show_pay_school_fees_scholarship_form_validate($form, &$state){
 
   switch(trim(strtolower(strtoupper($values['op'])))){
     case 'authorise scholarship!':
+    case 'authorise scholarship!':
 
       if(empty($values['remarks'])){
     	form_set_error('remarks', Error_Types(161));
@@ -11545,6 +11561,7 @@ function staff_show_pay_school_fees_scholarship_form_validate($form, &$state){
       }
     break;
 
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_authorise_scholarship']);
       $_SESSION['eduerp_authorise_scholarship'] = null;
@@ -11566,6 +11583,7 @@ function staff_show_pay_school_fees_scholarship_form_submit($form, &$state){
   $scholarshipTypes = get_scholarship_types($values['scholarship_type'], true);
 
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'authorise scholarship!':
     case 'authorise scholarship!':
 
 
@@ -11591,6 +11609,7 @@ function staff_show_pay_school_fees_scholarship_form_submit($form, &$state){
       //}
     break;
 
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_authorise_scholarship']); $_SESSION['eduerp_authorise_scholarship'] = null;
     break;
@@ -12032,6 +12051,7 @@ function staff_show_authorise_instalment_form_validate($form, &$state){
 
   switch(trim(strtolower(strtoupper($values['op'])))){
     case 'authorise instalment payment!':
+    case 'authorise instalment payment!':
 
       if(empty($values['remarks'])){
     	form_set_error('remarks', Error_Types(161));
@@ -12046,6 +12066,7 @@ function staff_show_authorise_instalment_form_validate($form, &$state){
         return;
       }
     break;
+   case 'annuler':
    case 'cancel':
      unset($_SESSION['eduerp_authorise_instalment']);
      $_SESSION['eduerp_authorise_instalment'] = null;
@@ -12063,6 +12084,7 @@ function staff_show_authorise_instalment_form_submit($form, &$state){
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))){
+    case 'authorise instalment payment!':
     case 'authorise instalment payment!':
 
       $node = new stdClass();
@@ -12084,6 +12106,7 @@ function staff_show_authorise_instalment_form_submit($form, &$state){
       unset($_SESSION['eduerp_authorise_instalment']); $_SESSION['eduerp_authorise_instalment'] = null;
     break;
 
+    case 'annuler':
     case 'cancel':
       unset($_SESSION['eduerp_authorise_instalment']); $_SESSION['eduerp_authorise_instalment'] = null;
     break;

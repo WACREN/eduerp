@@ -991,6 +991,7 @@ function _grading_ahah_stats() {
     if (in_array($user->uid, $registrar_uid_array)) {
       $showregistrarform = true;
 
+      if (empty($_SESSION['eduerpregistrarapprovalform'])) $_SESSION['eduerpregistrarapprovalform'] = new stdClass();
       $_SESSION['eduerpregistrarapprovalform']->department_url = $base_url . "/grading/stats?department={$departmentenc}&level={$level}&session={$sessionenc}&semester={$semester}";
       $_SESSION['eduerpregistrarapprovalform']->registrar_uid = $registrar_uid;
       $_SESSION['eduerpregistrarapprovalform']->vc_uid = $vc_uid;
@@ -1010,6 +1011,7 @@ function _grading_ahah_stats() {
     if (in_array($user->uid, $vc_uid_array)) {
       $showvcform = true;
 
+      if (empty($_SESSION['eduerpvcapprovalform'])) $_SESSION['eduerpvcapprovalform'] = new stdClass();
       $_SESSION['eduerpvcapprovalform']->department_url = $base_url . "/grading/stats?department={$departmentenc}&level={$level}&session={$sessionenc}&semester={$semester}";
       $_SESSION['eduerpvcapprovalform']->vc_uid = $vc_uid;
       $_SESSION['eduerpvcapprovalform']->department = $department;

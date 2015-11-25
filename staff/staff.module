@@ -10146,6 +10146,7 @@ function staff_school_fees_create_modify_fee_setup2_form_submit($form, &$state) 
 
   switch(trim(strtolower(strtoupper($values['op'])))){
 
+    case 'retour':
     case 'back':
       $_SESSION['eduerp_page'] = 1; unset($_POST['eduerp_page']);
       if((arg(2) || is_numeric(arg(2))))
@@ -10520,6 +10521,7 @@ function staff_school_fees_create_modify_fee_setup3_form_submit($form, &$state) 
 
   switch(trim(strtolower(strtoupper($values['op'])))){
 
+    case 'retour':
     case 'back':
       $_SESSION['eduerp_page'] = 2; unset($_POST['eduerp_page']);
       if((arg(2) || is_numeric(arg(2))))
@@ -10643,6 +10645,7 @@ function staff_school_fees_create_modify_fee_setup4_form_submit($form, &$state) 
       drupal_goto('staff/createmodifyfeestup');
     break;
 
+    case 'retour':
     case 'back':
       $_SESSION['eduerp_page'] = 3; unset($_POST['eduerp_page']);
       if((arg(2) || is_numeric(arg(2))))
@@ -11541,7 +11544,7 @@ function staff_show_pay_school_fees_scholarship_form_validate($form, &$state){
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))){
-    case 'authorise scholarship!':
+    case 'autoriser bourse!':
     case 'authorise scholarship!':
 
       if(empty($values['remarks'])){
@@ -11583,7 +11586,7 @@ function staff_show_pay_school_fees_scholarship_form_submit($form, &$state){
   $scholarshipTypes = get_scholarship_types($values['scholarship_type'], true);
 
   switch(trim(strtolower(strtoupper($values['op'])))){
-    case 'authorise scholarship!':
+    case 'autoriser bourse!':
     case 'authorise scholarship!':
 
 
@@ -12050,7 +12053,7 @@ function staff_show_authorise_instalment_form_validate($form, &$state){
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))){
-    case 'authorise instalment payment!':
+    case 'autoriser paiement par tranches!':
     case 'authorise instalment payment!':
 
       if(empty($values['remarks'])){
@@ -12084,7 +12087,7 @@ function staff_show_authorise_instalment_form_submit($form, &$state){
   $values = $state['values'];
 
   switch(trim(strtolower(strtoupper($values['op'])))){
-    case 'authorise instalment payment!':
+    case 'autoriser paiement par tranches!':
     case 'authorise instalment payment!':
 
       $node = new stdClass();

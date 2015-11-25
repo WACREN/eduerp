@@ -2,7 +2,7 @@
 
 function hostel_allocation_menu() {
   $items['staff/alloc_admin'] = array(
-    'title' => 'Hostel Administration',
+    'title' => t('Hostel Administration'),
     'page callback' => 'hostel_admin',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_NORMAL_ITEM,
@@ -10,57 +10,56 @@ function hostel_allocation_menu() {
   );
 
   $items['hostel_allocation/create_modify_hostel']=array(
-    'title'=>"Create or Modify Hostel",
+    'title' => t('Create or Modify Hostel'),
     'page callback' => 'hostel_allocation_create_modify_hostel',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/create_modify_block']=array(
-    'title'=>"Create or Modify Block",
+    'title' => t('Create or Modify Block'),
     'page callback' => 'hostel_allocation_create_modify_block',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
-
   $items['hostel_allocation/create_modify_room']=array(
-    'title'=>"Create or Modify Room",
+    'title' => t('Create or Modify Room'),
     'page callback' => 'hostel_allocation_create_modify_room',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/create_modify_category']=array(
-    'title'=>"Re-order Allocation Category",
+    'title' => t('Re-order Allocation Category'),
     'page callback' => 'hostel_allocation_create_modify_category',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/create_modify_allocation_rules']=array(
-    'title'=>"Create or Modify Allocation Rules",
+    'title' => t('Create or Modify Allocation Rules'),
     'page callback' => 'hostel_allocation_create_modify_allocation_rules',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/modify_global_settings']=array(
-    'title'=>"Modify Global Settings",
+    'title' => t('Modify Global Settings'),
     'page callback' => 'hostel_allocation_modify_global_settings',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/direct_reservation']=array(
-    'title'=>"Direct Room Reservation",
+    'title' => t('Direct Room Reservation'),
     'page callback' => 'hostel_allocation_direct_room_reservation',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,
   );
 
   $items['hostel_allocation/reservation_rpts']=array(
-    'title'=>"Hostel Allocation / Reservation Reports",
+    'title' => t('Hostel Allocation / Reservation Reports'),
     'page callback' => 'hostel_allocation_reports',
     'access arguments' => array('hostel_allocation admin'),
     'type' => MENU_CALLBACK,

@@ -212,6 +212,7 @@ if (!empty($_SESSION['views']['course_grades']['default']['coursecode']) &&
   global $eduerpapprovalform;
   $coursecodeenc = rawurlencode($coursecode);
   $sessionenc    = rawurlencode($session);
+  if (empty($eduerpapprovalform)) $eduerpapprovalform = new stdClass();
   $eduerpapprovalform->course_url = $base_url . "/course?coursecode={$coursecodeenc}&session={$sessionenc}&semester={$semester}&location={$location}";
   $eduerpapprovalform->lecturer_uid = $staff->lecturer_uid;
   $eduerpapprovalform->lecturer_alternate_uid = $staff->lecturer_alternate_uid;

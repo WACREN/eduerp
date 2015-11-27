@@ -655,7 +655,7 @@ function grading_stats_department_form(&$obj) {
 
   $form['updatebutton'] = array(
     '#type' => 'button',
-    '#value' => 'Show Grade Statistics and Approval Status for above selection',
+    '#value' => t('Show Grade Statistics and Approval Status for above selection'),
     '#ahah' => array(
       'path'    => 'grading/ahahstats',
       'wrapper' => 'stats_here',
@@ -1757,7 +1757,7 @@ function grading_stats_uni_form(&$obj) {
 
   $form['updatebutton'] = array(
     '#type' => 'button',
-    '#value' => 'Show Grade Statistics for above selection',
+    '#value' => t('Show Grade Statistics for above selection'),
     '#ahah' => array(
       'path'    => 'grading/ahahstatsuni',
       'wrapper' => 'stats_here_uni',
@@ -1987,7 +1987,7 @@ function grading_student_details_form(&$obj) {
 
   $form['updatestudentbutton'] = array(
     '#type' => 'button',
-    '#value' => "Show all of the selected Student's Courses",
+    '#value' => t("Show all of the selected Student's Courses"),
     '#ahah' => array(
       'path'    => 'grading/ahahstudentdetails',
       'wrapper' => 'studentdata_here',
